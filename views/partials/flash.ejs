@@ -1,0 +1,43 @@
+<% if (success && success.length > 0) { %>
+  <div id="flashSuccess" class="alert alert-success alert-dismissible fade show mt-3 col-6 offset-3" role="alert">
+    <strong><%= success %></strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div id="flashError" class="alert alert-danger alert-dismissible fade show mt-3 col-6 offset-3" role="alert">
+    <strong><%= error %></strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
+
+<style>
+  .alert {
+    transition: all 1.5s ease;
+    overflow: hidden;
+  }
+
+  .alert.slide-up {
+    opacity: 0;
+    transform: translateY(-20px);
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+  }
+</style>
+
+<script>
+  function dismissAlert(id, delay) {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.add("slide-up");
+        setTimeout(() => el.remove(), 1500); // match transition duration
+      }
+    }, delay);
+  }
+
+  dismissAlert("flashSuccess", 4000);
+  dismissAlert("flashError", 6000);
+</script>

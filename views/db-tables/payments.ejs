@@ -1,0 +1,48 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<div class="container mt-5">
+  <h1 class="mb-4 text-center">Payment Records</h1>
+  <a href="/admin">Home</a>
+  <div class="card shadow">
+    <div class="card-body">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Student Name</th>
+            <th>Roll No</th>
+            <th>Course</th>
+            <th>Academic Year</th>
+            <th>Amount Paid</th>
+            <th>Remaining Balance</th>
+            <th>Payment Mode</th>
+            <th>Receipt No</th>
+            <th>Payment Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (payments.length > 0) { %>
+            <% payments.forEach((p, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= p.student ? p.student.name : 'N/A' %></td>
+                <td><%= p.student ? p.student.rollNo : 'N/A' %></td>
+                <td><%= p.student && p.student.course ? p.student.course.courseName : 'N/A' %></td>
+                <td><%= p.feeStructure ? p.feeStructure.academicYear : 'N/A' %></td>
+                <td>₹<%= p.amountPaid.toFixed(2) %></td>
+                <td>₹<%= p.remainingBalance.toFixed(2) %></td>
+                <td><%= p.paymentMode %></td>
+                <td><%= p.receiptNumber %></td>
+                <td><%= new Date(p.paymentDate).toLocaleDateString() %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="10" class="text-center text-muted">No payments found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

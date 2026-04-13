@@ -1,0 +1,5 @@
+name,rollNo,branch,year,isHosteller,contactNumber,email,address,feeStructure
+Rahul Sharma,201,CSE,1,true,9876543210,rahul@gmail.com,Delhi,2025-2026
+Ananya Verma,202,Mechanical Engg,2,false,9123456780,ananya@gmail.com,Mumbai,2025-2026
+Amit Singh,203,EEE,3,true,9988776655,amit@gmail.com,Kanpur,2025-2026
+Priya Gupta,204,Electronics,1,false,9090909090,priya@gmail.com,Lucknow,2025-2026

@@ -1,0 +1,172 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  .card {
+    border: none;
+    border-top: 5px solid;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  .card-body h5 {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+  }
+  .card-body h2 {
+    color: #333;
+  }
+  .border-primary { border-color: #0d6efd !important; }
+  .border-success { border-color: #198754 !important; }
+  .border-info    { border-color: #0dcaf0 !important; }
+  .border-danger  { border-color: #dc3545 !important; }
+</style>
+
+<div class="container my-5">
+  <h1 class="fw-bold text-center mb-5" style="color: #2c3e50;">Admin Dashboard</h1>
+
+  <!-- Stat Cards -->
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center border-primary">
+        <div class="card-body py-4">
+          <h5 class="fw-bold">Total Students</h5>
+          <h2 class="fw-bold m-0"><%= totalStudents %></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center border-success">
+        <div class="card-body py-4">
+          <h5 class="fw-bold">Total Fee Expected</h5>
+          <h2 class="fw-bold m-0">₹<%= totalFeeExpected.toLocaleString() %></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center border-info">
+        <div class="card-body py-4">
+          <h5 class="fw-bold">Total Collected</h5>
+          <h2 class="fw-bold m-0">₹<%= totalCollected.toLocaleString() %></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center border-danger">
+        <div class="card-body py-4">
+          <h5 class="fw-bold">Total Pending</h5>
+          <h2 class="fw-bold m-0 text-danger">₹<%= totalPending.toLocaleString() %></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <!-- <div class="text-center mt-5">
+    <a href="/api/v1/admin/students" class="btn btn-primary btn-lg px-5 shadow-sm me-2 rounded-pill">View Students</a>
+    <a href="/api/v1/admin/payments" class="btn btn-dark btn-lg px-5 shadow-sm rounded-pill">View Payments</a>
+  </div> -->
+
+
+  
+  <!-- Charts -->
+  <div class="row g-4 mt-4">
+
+    <!-- Doughnut -->
+    <div class="col-md-4">
+      <div class="card shadow-sm p-4" style="border-radius: 12px;">
+        <h5 class="fw-bold text-center mb-3" style="color: #2c3e50;">Fee Collection vs Pending</h5>
+        <div style="height: 280px; margin: auto;">
+          <canvas id="feeDonut"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar -->
+    <div class="col-md-8">
+      <div class="card shadow-sm p-4" style="border-radius: 12px;">
+        <h5 class="fw-bold text-center mb-3" style="color: #2c3e50;">Year-wise Student Count</h5>
+        <div style="height: 280px;">
+          <canvas id="yearBar"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const totalCollected = <%= totalCollected %>;
+  const totalPending   = <%= totalPending %>;
+  const yearLabels     = <%- JSON.stringify(yearBreakdown.map(y => y.year)) %>;
+  const yearCounts     = <%- JSON.stringify(yearBreakdown.map(y => y.count)) %>;
+
+  // Doughnut Chart
+  new Chart(document.getElementById("feeDonut"), {
+    type: "doughnut",
+    data: {
+      labels: ["Collected", "Pending"],
+      datasets: [{
+        data: [totalCollected, totalPending],
+        backgroundColor: ["#198754", "#dc3545"],
+        borderWidth: 0,
+        hoverOffset: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "70%",
+      plugins: {
+        legend: { position: "bottom" },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ₹${ctx.parsed.toLocaleString()}`
+          }
+        }
+      }
+    }
+  });
+
+  // Bar Chart
+  new Chart(document.getElementById("yearBar"), {
+    type: "bar",
+    data: {
+      labels: yearLabels,
+      datasets: [{
+        label: "Students",
+        data: yearCounts,
+        backgroundColor: ["#0d6efd", "#198754", "#0dcaf0", "#ffc107"],
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 },
+          grid: { color: "#f0f0f0" }
+        },
+        x: {
+          grid: { display: false }
+        }
+      }
+    }
+  });
+</script>

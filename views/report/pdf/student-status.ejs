@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Students with Pending Fees</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 6px;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    .unpaid {
+      color: red;
+      font-weight: bold;
+    }
+    .partial {
+      color: orange;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Students with Pending Fees</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Roll No</th>
+      <th>Branch</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% report.forEach((s, i) => { %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= s.name %></td>
+        <td><%= s.rollNo %></td>
+        <td><%= s.branchName %> (<%= s.branchCode %>)</td>
+        <td class="<%= s.status === 'UNPAID' ? 'unpaid' : 'partial' %>">
+          <%= s.status %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+</body>
+</html>

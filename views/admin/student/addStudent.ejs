@@ -1,0 +1,160 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container form-container mt-5">
+  
+  <div class="form-card">
+    <h2 class="form-title fw-bold text-center">Add New Student</h2>
+
+    <form action="/api/v1/admin/students/add" method="POST">
+
+      <!-- Basic Info -->
+      <div class="form-section row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="name" class="form-control" required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Roll Number</label>
+          <input type="text" name="rollNo" class="form-control" required>
+        </div>
+      </div>
+
+      <!-- Academic Info -->
+      <div class="form-section row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Course</label>
+          <select name="course" class="form-select" required>
+            <option value="BTECH">BTECH</option>
+          </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Branch</label>
+          <select name="branch" class="form-select" required>
+            <% branches.forEach(branch => { %>
+              <option value="<%= branch._id %>">
+                <%= branch.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Year</label>
+          <select name="year" class="form-select" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="form-section row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Contact Number</label>
+          <input type="text" name="contactNumber" class="form-control" required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control">
+        </div>
+      </div>
+
+      <!-- Other Info -->
+      <div class="form-section row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Hostel Status</label>
+          <select name="isHosteller" class="form-select">
+            <option value="false">Day Scholar</option>
+            <option value="true">Hosteller</option>
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Fee Structure</label>
+          <select name="feeStructure" class="form-select" required>
+            <% feeStructures.forEach(fee => { %>
+              <option value="<%= fee._id %>">
+                <%= fee.academicYear %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="form-section row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Date of Admission</label>
+          <input type="date" name="admissionDate" class="form-control" required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Address</label>
+          <input type="text" name="address" class="form-control" required>
+        </div>
+      </div>
+      <!-- Address -->
+      <!-- <div class="form-section">
+        <label class="form-label">Address</label>
+        <textarea name="address" class="form-control" rows="3"></textarea>
+      </div> -->
+
+      <!-- Buttons -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-submit me-2">Add Student</button>
+        <button type="reset" class="btn btn-secondary btn-reset">Reset</button>
+      </div>
+
+    </form>
+
+    
+  </div>
+  <hr class="my-5">
+
+    <h3>Bulk Upload Students (CSV)</h3>
+
+    <form action="/api/v1/admin/students/bulk" 
+        method="POST" 
+        enctype="multipart/form-data">
+
+        <div class="mb-3">
+            <label class="form-label">Upload CSV File</label>
+            <input type="file" name="file" class="form-control" accept=".csv" required>
+        </div>
+
+    <button type="submit" class="btn btn-primary">
+        Upload CSV
+    </button>
+    </form>
+    <% if (typeof failedStudents !== 'undefined' && failedStudents.length > 0) { %>
+        <div class="mt-4">
+            <h4 class="text-danger">Failed Records</h4>
+
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Branch</th>
+                <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% failedStudents.forEach(student => { %>
+                <tr>
+                    <td><%= student.name %></td>
+                    <td><%= student.rollNo %></td>
+                    <td><%= student.branch %></td>
+                    <td class="text-danger"><%= student.reason %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>

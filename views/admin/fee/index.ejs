@@ -1,0 +1,86 @@
+<% layout("layouts/boilerplate") %>
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        .page-title {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .fee-card {
+            border-radius: 14px;
+            border-top: 5px solid #667eea;
+            transition: all .2s ease;
+        }
+
+        .fee-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-btn i {
+            pointer-events: none;
+        }
+    </style>
+
+    <div class="container my-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">Fee Structure Management</h2>
+            <a href="/api/v1/fees/new">
+                <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addFeeModal">
+                    <i class="fa fa-plus me-1"></i> Add Fee Structure
+                </button>
+            </a>
+
+        </div>
+
+        <% if (feeStructures.length===0) { %>
+            <div class="alert alert-info">No fee structures added yet.</div>
+        <% } %>
+
+        <div class="row g-4">
+            <% feeStructures.forEach(fee=> { %>
+                <div class="col-md-4">
+                    <div class="card fee-card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold">
+                                <%= fee.academicYear %>
+                            </h5>
+                            <p class="text-muted mb-1">
+                                <%= fee.course %>
+                            </p>
+
+                            <p class="mb-1">Tuition: ₹<%= fee.breakdown.tuition %>
+                            </p>
+                            <p class="mb-1">Hostel: ₹<%= fee.hostelFee %>
+                            </p>
+
+                            <h5 class="mt-2 text-success">Total: ₹<%= fee.totalAmount %>
+                            </h5>
+                            
+                            <div class="d-flex gap-2 mt-3">
+                                <!-- EDIT -->
+                                <form action="/api/v1/fees/<%= fee._id %>/edit">
+                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#editModal<%= fee._id %>">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </form>
+                                <!-- DELETE  -->
+                                <!-- <form action="/api/v1/fees/<%= fee._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <% }) %>
+
+        </div>
+    </div>

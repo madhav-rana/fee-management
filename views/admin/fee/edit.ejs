@@ -1,0 +1,47 @@
+<% layout("layouts/boilerplate") %>
+
+    <div class="container mt-4 col-6">
+        <h2>Edit Fee Structure</h2>
+
+        <form action="/api/v1/fees/<%= feeStructure._id %>?_method=PUT" method="POST">
+
+
+            <label>Academic Year</label>
+            <input name="academicYear" value="<%= feeStructure.academicYear %>" class="form-control">
+
+            <label class="mt-2">Course</label>
+            <input name="course" value="<%= feeStructure.course %>" class="form-control">
+
+            <h5 class="mt-4">Breakdown</h5>
+
+            Tution
+            <input name="breakdown[tuition]" value="<%= feeStructure.breakdown.tuition %>" class="form-control mb-2">
+            cautionMoney
+            <input name="breakdown[cautionMoney]" value="<%= feeStructure.breakdown.cautionMoney %>"
+                class="form-control mb-2">
+            Exam Fee
+            <input name="breakdown[exam]" value="<%= feeStructure.breakdown.exam %>" class="form-control mb-2">
+            Activity Fee
+            <input name="breakdown[activity]" value="<%= feeStructure.breakdown.activity %>" class="form-control mb-2">
+            Other
+            <input name="breakdown[others]" value="<%= feeStructure.breakdown.others %>" class="form-control mb-2">
+
+            <label>Hostel Fee</label>
+            <input name="hostelFee" value="<%= feeStructure.hostelFee %>" class="form-control">
+
+            <label class="mt-2">Due Date</label>
+            <input type="date" name="dueDate" value="<%= feeStructure.dueDate?.toISOString().split('T')[0] %>"
+                class="form-control">
+
+            <label class="mt-2">Fine Per Week</label>
+            <input name="finePerWeek" value="<%= feeStructure.finePerWeek %>" class="form-control">
+
+            <button class="btn btn-warning mt-4">Update</button>
+            &nbsp;&nbsp;&nbsp;
+            <a href="/api/v1/fees" class="btn btn-secondary mt-4">
+                Cancle
+            </a>
+
+
+        </form>
+    </div>

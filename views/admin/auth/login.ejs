@@ -1,0 +1,101 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  /* Page background and centering */
+  .auth-wrapper {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 90vh; /* Adjust for navbar height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Modern Card Styling */
+  .login-card {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+  }
+
+  /* Input Styling */
+  .form-label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  /* Gradient Button */
+  .btn-primary-gradient {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    border: none;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .btn-primary-gradient:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline-custom {
+    border: 2px solid #28a745;
+    color: #28a745;
+    background: transparent;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin-top: 15px;
+  }
+</style>
+
+<div class="auth-wrapper">
+  <div class="login-card">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color: #333;">Admin Login</h2>
+      <p class="text-muted">Enter credentials to manage fees</p>
+    </div>
+
+    <form method="POST" action="/api/v1/admin/login">
+      <div>
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+      </div>
+
+      <div>
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <button type="submit" class="btn-primary-gradient shadow-sm">
+        LOGIN
+      </button>
+
+      <p class="mt-3"><a href="/api/v1/admin/forget-password" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Forget Password</a>
+      &nbsp;&nbsp;&nbsp;
+      <a href="/api/v1/admin/register" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">New User</a>
+      </p>
+    </form>
+  </div>
+</div>

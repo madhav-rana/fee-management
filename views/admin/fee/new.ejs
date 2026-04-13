@@ -1,0 +1,40 @@
+<% layout("layouts/boilerplate") %>
+
+    <div class="container mt-4 col-6">
+        <h2>Add Fee Structure</h2>
+
+        <form action="/api/v1/fees" method="POST">
+
+            <label>Academic Year</label>
+            <input name="academicYear" class="form-control" placeholder="2025-2026" required>
+
+            <label class="mt-2">Course</label>
+            <select name="course" class="form-control">
+                <option value="BTECH">BTECH</option>
+            </select>
+
+            <h5 class="mt-3">Fee Breakdown</h5>
+
+            <input name="breakdown[tuition]" placeholder="Tuition Fee" class="form-control mb-2" required>
+            <input name="breakdown[cautionMoney]" placeholder="Caution Money" class="form-control mb-2" required>
+            <input name="breakdown[exam]" placeholder="Exam Fee" class="form-control mb-2" required>
+            <input name="breakdown[activity]" placeholder="Activity Fee" class="form-control mb-2">
+            <input name="breakdown[others]" placeholder="Other Fees" class="form-control mb-2">
+
+            <label>Hostel Fee</label>
+            <input name="hostelFee" class="form-control">
+
+            <label class="mt-2">Due Date</label>
+            <input type="date" name="dueDate" class="form-control">
+
+            <label class="mt-2">Fine Per Day</label>
+            <input name="finePerDay" class="form-control">
+
+            <button class="btn btn-success mt-4">Save</button>
+            &nbsp;&nbsp;&nbsp;
+            <a href="/api/v1/fees" class="btn btn-secondary mt-4">
+                Cancle
+            </a>
+
+        </form>
+    </div>
