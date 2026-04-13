@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IERT Prayagraj — Fee Management System</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── CSS VARIABLES ─── */
+    :root {
+      --gold:        #c9a84c;
+      --gold-light:  #e8c97a;
+      --gold-dark:   #9b7a2f;
+      --navy:        #0b1b35;
+      --navy-mid:    #112347;
+      --glass-bg:    rgba(7, 18, 40, 0.72);
+      --glass-border:rgba(201, 168, 76, 0.28);
+      --radius:      16px;
+      --font-display:'Cinzel', serif;
+      --font-body:   'DM Sans', sans-serif;
+    }
+
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: #fff;
+      background: var(--navy);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── FULL-SCREEN HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background:
+        linear-gradient(
+          160deg,
+          rgba(11, 27, 53, 0.82) 0%,
+          rgba(11, 27, 53, 0.55) 50%,
+          rgba(17, 35, 71, 0.88) 100%
+        ),
+        url('/images/iert-campus.jpg') center center / cover no-repeat;
+      /* background-attachment: fixed; */
+    }
+
+    /* subtle grain overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* decorative gold lines */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+      z-index: 2;
+    }
+
+    /* ─── NAV BAR ─── */
+    .top-nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 2.5rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-brand-text {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
+    .nav-brand-text span {
+      display: block;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.55);
+      font-family: var(--font-body);
+      letter-spacing: 0.2em;
+    }
+
+    /* Dashboard button with pulse */
+    .btn-dashboard {
+      position: relative;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      color: var(--navy);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      border: none;
+      border-radius: 50px;
+      padding: 0.65rem 1.8rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 0 0 rgba(201,168,76,0.5);
+      animation: pulse-gold 2.5s infinite;
+    }
+
+    .btn-dashboard:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 28px rgba(201,168,76,0.45);
+      color: var(--navy);
+      animation: none;
+    }
+
+    @keyframes pulse-gold {
+      0%   { box-shadow: 0 0 0 0   rgba(201,168,76,0.55); }
+      60%  { box-shadow: 0 0 0 14px rgba(201,168,76,0);   }
+      100% { box-shadow: 0 0 0 0   rgba(201,168,76,0);   }
+    }
+
+    /* ─── HERO BODY ─── */
+    .hero-body {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem 3.5rem;
+    }
+
+    /* ─── GLASS CARD ─── */
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(20px) saturate(1.3);
+      -webkit-backdrop-filter: blur(20px) saturate(1.3);
+      max-width: 820px;
+      width: 100%;
+      padding: 3rem 3.5rem;
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* Logo ring */
+    .logo-ring {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: rgba(201,168,76,0.1);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 0 30px rgba(201,168,76,0.2);
+    }
+
+    .logo-ring img {
+      width: 70px; height: 70px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    /* Fallback crest if image not loaded */
+    .logo-crest {
+      font-size: 2.4rem;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    /* Gold rule divider */
+    .gold-rule {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 1.25rem auto;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #fff;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .card-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(0.78rem, 1.8vw, 0.95rem);
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.68);
+      text-align: center;
+      max-width: 580px;
+      margin: 1rem auto 0;
+    }
+
+    /* ─── ESTABLISHED BADGE ─── */
+    .est-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 50px;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      color: var(--gold-light);
+      font-family: var(--font-display);
+      margin-bottom: 1rem;
+    }
+
+    /* ─── BRANCH BADGES ─── */
+    .branches-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 0.75rem;
+    }
+
+    .branch-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .branch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(201,168,76,0.22);
+      border-radius: 8px;
+      padding: 0.42rem 0.85rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.82);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      cursor: default;
+    }
+
+    .branch-badge:hover {
+      background: rgba(201,168,76,0.14);
+      border-color: var(--gold);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .branch-badge i {
+      font-size: 0.85rem;
+      color: var(--gold);
+    }
+
+    /* ─── FEATURES ROW ─── */
+    .features-section {
+      position: relative;
+      z-index: 5;
+      background: linear-gradient(180deg, rgba(11,27,53,0) 0%, rgba(11,27,53,0.97) 15%);
+      padding: 0 1.5rem 4rem;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+      height: 100%;
+    }
+
+    .feature-card:hover {
+      background: rgba(201,168,76,0.07);
+      border-color: rgba(201,168,76,0.4);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 54px; height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.06));
+      border: 1px solid rgba(201,168,76,0.25);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.1rem;
+      font-size: 1.4rem;
+      color: var(--gold-light);
+    }
+
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.04em;
+    }
+
+    .feature-desc {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+    }
+
+    /* ─── SECTION LABEL ─── */
+    .section-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .section-title span {
+      color: var(--gold-light);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: rgba(6, 13, 28, 0.98);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 1.6rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.03em;
+    }
+
+    .footer-copy strong {
+      color: var(--gold-light);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.4rem;
+    }
+
+    .footer-links a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold-light); }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--navy); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .glass-card { padding: 2rem 1.5rem; }
+      .top-nav { padding: 1rem 1.25rem; }
+      .nav-brand-text { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .glass-card { padding: 1.5rem 1.1rem; }
+      .branch-badge { font-size: 0.72rem; padding: 0.35rem 0.7rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- hero section  -->
+  <section class="hero">
+
+    <!-- TOP NAV -->
+    <nav class="top-nav">
+      <a href="/" class="nav-brand">
+        <div style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;background:rgba(201,168,76,0.1);">
+          <i class="bi bi-building-fill" style="color:var(--gold-light);font-size:1rem;"></i>
+        </div>
+        <div class="nav-brand-text">
+          IERT Prayagraj
+          <span>Est. 1955</span>
+        </div>
+      </a>
+
+      <a href="/portal" class="btn-dashboard">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+        continue
+        <i class="bi bi-arrow-right-short" style="font-size:1.1rem;"></i>
+      </a>
+    </nav>
+
+    <!-- CENTRAL GLASS CARD -->
+    <div class="hero-body">
+      <div class="glass-card">
+
+        <!-- Logo -->
+        <div class="text-center">
+          <div class="logo-ring">
+            <img
+              src="/media/logo.png"
+              alt="IERT Logo"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+            />
+            <div class="logo-crest" style="display:none;">
+              <i class="bi bi-award-fill"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Est badge -->
+        <div class="text-center">
+          <span class="est-badge">
+            <i class="bi bi-star-fill" style="font-size:0.6rem;"></i>
+            Established 1955
+            <i class="bi bi-star-fill" style="font-size:0.6rem;"></i>
+          </span>
+        </div>
+
+        <!-- Headings -->
+        <h1 class="card-title">
+          Institute of Engineering &amp; Rural Technology (IERT), Prayagraj
+        </h1>
+
+        <div class="gold-rule"></div>
+
+        <p class="card-subtitle">Engineering Degree Division &mdash; Fee Management System</p>
+
+        <!-- Description -->
+        <p class="card-desc">
+          For over six decades, IERT has stood as a beacon of technical excellence in Uttar Pradesh.
+          Affiliated with AKTU, the institute nurtures future engineers through rigorous academics
+          and industry-aligned programmes, upholding its founding vision of rural upliftment through technology.
+        </p>
+
+        <!-- Branches -->
+        <div class="text-center mt-4">
+          <p class="branches-label">Engineering Branches</p>
+          <div class="branch-wrap">
+            <span class="branch-badge"><i class="bi bi-gear-wide-connected"></i> Industrial &amp; Production</span>
+            <span class="branch-badge"><i class="bi bi-cpu-fill"></i> Computer Science</span>
+            <span class="branch-badge"><i class="bi bi-broadcast-pin"></i> Electronics</span>
+            <span class="branch-badge"><i class="bi bi-buildings-fill"></i> Civil</span>
+            <span class="branch-badge"><i class="bi bi-lightning-charge-fill"></i> Electrical</span>
+            <span class="branch-badge"><i class="bi bi-wrench-adjustable-circle-fill"></i> Mechanical</span>
+            <span class="branch-badge"><i class="bi bi-sliders2-vertical"></i> Instrumentation &amp; Control</span>
+          </div>
+        </div>
+
+        <!-- CTA inside card -->
+        <div class="text-center mt-4">
+          <a href="/portal" class="btn-dashboard">
+            <i class="bi bi-wallet2"></i>
+            Access Fee Portal
+          </a>
+        </div>
+
+      </div><!-- /glass-card -->
+    </div><!-- /hero-body -->
+
+  </section>
+
+
+  <!-- FEATURES SECTION -->
+  <section class="features-section">
+    <div style="max-width:960px;margin:0 auto;">
+
+      <div class="text-center mb-5">
+        <p class="section-eyebrow">Portal Capabilities</p>
+        <h2 class="section-title">Why use the <span>Fee Portal?</span></h2>
+        <div class="gold-rule mt-3"></div>
+      </div>
+
+      <div class="row g-4">
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <p class="feature-title">Secure Payments</p>
+            <p class="feature-desc">Bank-grade encryption protects every transaction on the platform.</p>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-receipt-cutoff"></i></div>
+            <p class="feature-title">Instant Receipts</p>
+            <p class="feature-desc">Download PDF receipts immediately after payment confirmation.</p>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+            <p class="feature-title">24/7 Access</p>
+            <p class="feature-desc">Pay fees or check dues any time — no counter queues needed.</p>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-bar-chart-line-fill"></i></div>
+            <p class="feature-title">Live Dashboard</p>
+            <p class="feature-desc">Administrators get real-time analytics on collections &amp; defaults.</p>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-people-fill"></i></div>
+            <p class="feature-title">Multi-Role Access</p>
+            <p class="feature-desc">Separate portals for students, faculty, and accounts department.</p>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+            <p class="feature-title">Cloud Backups</p>
+            <p class="feature-desc">All records securely stored and retrievable at any point in time.</p>
+          </div>
+        </div>
+
+      </div><!-- /row -->
+    </div>
+  </section>
+
+
+
+   <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-copy">
+        &copy; <%= new Date().getFullYear() %> <strong>IERT, Prayagraj</strong>.
+        All rights reserved. &nbsp;|&nbsp; Engineering Degree Division.
+      </p>
+      <nav class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Contact</a>
+        <a href="/portal">Portal Login</a>
+      </nav>
+    </div>
+  </footer>
+
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Staggered branch badge entrance
+    document.addEventListener('DOMContentLoaded', () => {
+      const badges = document.querySelectorAll('.branch-badge');
+      badges.forEach((badge, i) => {
+        badge.style.opacity = '0';
+        badge.style.transform = 'translateY(10px)';
+        badge.style.transition = `opacity 0.4s ease ${0.6 + i * 0.07}s, transform 0.4s ease ${0.6 + i * 0.07}s`;
+        setTimeout(() => {
+          badge.style.opacity = '1';
+          badge.style.transform = 'translateY(0)';
+        }, 100);
+      });
+
+      // Feature cards entrance on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, idx) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.feature-card').forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(24px)';
+        card.style.transition = `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s, background 0.25s, border-color 0.25s`;
+        observer.observe(card);
+      });
+    });
+  </script>
+
+  <script>
+  // Redirect function
+  function goToPortal() {
+    window.location.href = "/portal";
+  }
+
+  // 1. Auto redirect after 5 seconds
+  // let timer = setTimeout(goToPortal, 5000);
+
+  // 2. Redirect on user interaction (click anywhere)
+  document.addEventListener("click", () => {
+    goToPortal();
+  });
+</script>
+
+</body>
+</html>

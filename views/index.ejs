@@ -1,0 +1,98 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<style>
+  .portal-container {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .portal-title {
+    font-weight: 700;
+    color: #2c3e50;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+  }
+
+  .menu-card {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  }
+
+  .menu-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  }
+
+  .menu-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #764ba2;
+  }
+
+  .menu-card h4 {
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .menu-card p {
+    font-size: 0.9rem;
+  }
+
+  .portal-subtitle {
+    color: #555;
+  }
+
+  .logo {
+    margin-bottom: 10px;
+  }
+</style>
+
+<div class="container portal-container mt-5">
+    
+    <!-- Header -->
+    <div class="mb-4">
+        <img src="/media/logo.png" width="60" class="logo" alt="logo">
+        
+        <h1 class="portal-title fs-3">
+            Institute of Engineering & Rural Technology
+        </h1>
+        
+        <p class="portal-subtitle">
+            Fee Management System — Prayagraj
+        </p>
+    </div>
+
+    <!-- Cards -->
+    <div class="menu-grid">
+        
+        <!-- Student Card -->
+        <a href="/api/v1/students" class="menu-card">
+            <div class="menu-icon">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <h4>Student Portal</h4>
+            <p class="text-muted">Pay fees, check status, download receipts</p>
+        </a>
+
+        <!-- Admin Card -->
+        <a href="/api/v1/admin/login" class="menu-card">
+            <div class="menu-icon">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h4>Admin Panel</h4>
+            <p class="text-muted">Manage students, payments and reports</p>
+        </a>
+
+    </div>
+</div>

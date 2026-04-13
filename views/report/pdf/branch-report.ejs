@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Branch-wise Fee Report</title>
+  <style>
+    body { font-family: Arial; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #333; padding: 6px; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">
+  Branch-wise Fee Report (<%= academicYear %>)
+</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Branch</th>
+      <th>Students</th>
+      <th>Expected (₹)</th>
+      <th>Collected (₹)</th>
+      <th>Pending (₹)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% report.forEach(r => { %>
+      <tr>
+        <td><%= r.branchName %> (<%= r.branchCode %>)</td>
+        <td><%= r.totalStudents %></td>
+        <td>₹<%= r.expectedAmount %></td>
+        <td>₹<%= r.totalCollected %></td>
+        <td>₹<%= r.pendingAmount %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+</body>
+</html>

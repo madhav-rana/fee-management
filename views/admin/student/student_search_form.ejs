@@ -1,0 +1,42 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<div class="container my-5 col-8">
+  <h2 class="fw-bold text-center mb-4">Search student</h2>
+
+  <form action="/api/v1/admin/students/search" method="GET" class="card p-4 shadow">
+
+    <div class="row">
+      <!-- Search by Roll No / Name -->
+      <div class="col-md-6 mb-3">
+        <label class="form-label fw-bold">Roll No or Name</label>
+        <input
+          type="text"
+          name="query"
+          class="form-control"
+          placeholder="Enter roll no or student name"
+          required
+        />
+      </div>
+
+      <!-- Year Filter -->
+      <div class="col-md-4 mb-3">
+        <label class="form-label fw-bold">Year</label>
+        <select name="year" class="form-select">
+          <option value="">All Years</option>
+          <option value="1">1st Year</option>
+          <option value="2">2nd Year</option>
+          <option value="3">3rd Year</option>
+          <option value="4">4th Year</option>
+        </select>
+      </div>
+
+      <!-- Search Button -->
+      <div class="col-md-2 d-flex align-items-end mb-3">
+        <button class="btn btn-primary w-100">
+          🔍 Search
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

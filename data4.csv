@@ -1,0 +1,6 @@
+name,rollNo,branch,year,isHosteller,contactNumber,email,address,feeStructure
+Rahul Sharma,401,Computer Science Engineering,1,true,9876543210,rahul@gmail.com,Delhi,2025-2026
+Ananya Verma,402,Wrong Branch,2,false,9123456780,ananya@gmail.com,Mumbai,2025-2026
+,403,Mechanical Engineering,2,true,9988776655,amit@gmail.com,Kanpur,2025-2026
+Vikas Yadav,401,Civil Engineering,4,true,8765432109,vikas@gmail.com,Varanasi,2025-2026
+Sneha Patel,405,Instrumentation & Control Engineering,2,false,9898989898,sneha@gmail.com,Ahmedabad,2024-2025

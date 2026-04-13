@@ -1,0 +1,143 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<div class="container my-5">
+  <div class="text-center mb-4">
+    <h1 class="fw-bold">Payment Receipt</h1>
+    <p class="text-muted">Receipt No: <%= payment.receiptNumber %></p>
+  </div>
+
+  <div class="card shadow border-primary">
+    <div class="card-header bg-primary text-white fw-bold">
+      Student & Fee Information
+    </div>
+
+    <div class="card-body">
+
+      <!-- Student Info -->
+      <div class="row mb-3">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Student Name</label>
+          <input type="text" class="form-control" value="<%= payment.student.name %>" disabled>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Roll No</label>
+          <input type="text" class="form-control" value="<%= payment.student.rollNo %>" disabled>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Course</label>
+          <input type="text" class="form-control" value="<%= payment.student.course %>" disabled>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Branch</label>
+          <input type="text" class="form-control" value="<%= payment.student.branch.name %>" disabled>
+        </div>
+      </div>
+
+      <!-- Fee Info -->
+      <div class="row mb-3">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Total Fee</label>
+          <input
+            type="text"
+            class="form-control"
+            value="₹<%= expectedTotal.toFixed(2) %>"
+            disabled
+          >
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Payment Date</label>
+          <input
+            type="text"
+            class="form-control"
+            value="<%= new Date(payment.paymentDate).toLocaleDateString() %>"
+            disabled
+          >
+        </div>
+      </div>
+
+      <!-- Payment Info -->
+      <div class="row mb-3">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Amount Paid</label>
+          <input
+            type="text"
+            class="form-control"
+            value="₹<%= payment.amountPaid.toFixed(2) %>"
+            disabled
+          >
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold">Payment Mode</label>
+          <input
+            type="text"
+            class="form-control"
+            value="<%= payment.paymentMode.toUpperCase() %>"
+            disabled
+          >
+        </div>
+      </div>
+
+      <!-- Fee Breakdown -->
+      <h5 class="fw-bold mt-4">Fee Breakdown</h5>
+      <table class="table table-bordered mt-2">
+        <tbody>
+          <% Object.entries(payment.student.feeStructure.breakdown).forEach(([key, value]) => { %>
+            <% if (key === 'cautionMoney' && payment.student.year !== 1) return; %>
+            <% if (value === 0) return; %>  <!-- skip zero value fields -->
+            <tr>
+              <th><%= key.charAt(0).toUpperCase() + key.slice(1) %></th>
+              <td>₹<%= value.toFixed(2) %></td>
+            </tr>
+          <% }) %>
+          <!-- for hostel  -->
+           <tr>
+            <th>Hostel</th>
+            <% if (payment.student.isHosteller) { %>
+              <td><%= payment.student.feeStructure.hostelFee %></td>
+            <% } else { %>
+              <td>N/A</td>
+            <% } %>
+           </tr>
+        </tbody>
+      </table>
+
+      <!-- Actions -->
+      <div class="text-center mt-4">
+        <button class="btn btn-primary btn-lg" onclick="window.print()">
+          🖨 Print Receipt
+        </button>
+
+        <a href="/api/v1/payments/receipt/<%= payment._id %>/pdf"
+            class="btn btn-success btn-lg ms-2">
+            ⬇ Download PDF
+        </a>
+
+        <!-- <a href="/api/v1/students/<%= payment.student._id %>" class="btn btn-secondary btn-lg ms-2">
+          ⬅ Back to Student
+        </a> -->
+        <!-- <a href="/api/v1/students" class="btn btn-secondary btn-lg ms-2">
+          ⬅ Back to Student
+        </a> -->
+        <% if (isAuthenticated) { %>
+          <a href="/api/v1/admin/students" class="btn btn-secondary btn-lg ms-2">
+            ⬅ Back to Students
+          </a>
+        <% } else { %>
+          <a href="/api/v1/students" class="btn btn-secondary btn-lg ms-2">
+            ⬅ Done
+          </a>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

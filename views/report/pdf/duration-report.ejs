@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Duration-wise Fee Collection Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.6; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+    th { background: #f2f2f2; font-weight: bold; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .summary { margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #2c3e50; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h2>Duration-wise Fee Collection Report</h2>
+  <p>Duration: <%= from || 'All Time' %> to <%= to || 'Present' %></p>
+  <p>Branch: <%= branch || 'All Branches' %></p>
+</div>
+
+<div class="summary">
+  Total Collection: ₹<%= grandTotal.toLocaleString() %>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Student Name</th>
+      <th>Roll No</th>
+      <th>Branch</th>
+      <th>Payments</th>
+      <th>Total Paid (₹)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% report.forEach((r, index) => { %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= r.studentName %></td>
+        <td><%= r.rollNo %></td>
+        <td><%= r.branchName %> (<%= r.branchCode %>)</td>
+        <td><%= r.paymentsCount %></td>
+        <td>₹<%= r.totalPaid.toLocaleString() %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+</body>
+</html>

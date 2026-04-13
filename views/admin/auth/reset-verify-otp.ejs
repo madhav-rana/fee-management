@@ -1,0 +1,93 @@
+<% layout("layouts/boilerplate") %>
+
+<style>
+  /* Page background and centering */
+  .auth-wrapper {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 90vh; /* Adjust for navbar height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* Modern Card Styling */
+  .login-card {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+  }
+
+  /* Input Styling */
+  .form-label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  /* Gradient Button */
+  .btn-primary-gradient {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    border: none;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .btn-primary-gradient:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline-custom {
+    border: 2px solid #28a745;
+    color: #28a745;
+    background: transparent;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin-top: 15px;
+  }
+</style>
+
+<div class="auth-wrapper">
+  <div class="login-card">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">Verify OTP</h2>
+      <p class="text-muted">Check your email for OTP</p>
+    </div>
+
+    <form method="POST" action="/api/v1/admin/reset-password-verify">
+      <input type="hidden" name="email" value="<%= email %>">
+
+      <div>
+        <label class="form-label">OTP</label>
+        <input type="text" name="otp" class="form-control" placeholder="Enter 6-digit OTP" required>
+      </div>
+
+      <button class="btn-primary-gradient">
+        Verify OTP
+      </button>
+    </form>
+  </div>
+</div>

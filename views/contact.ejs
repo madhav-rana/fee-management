@@ -1,0 +1,111 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<style>
+  .contact-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 30px 20px;
+  }
+
+  .contact-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+
+  .contact-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+  }
+
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .dept-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+  }
+
+  .dept-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .dept-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #764ba2;
+  }
+
+  .dept-info {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 5px;
+  }
+
+  .dept-info i {
+    color: #764ba2;
+    margin-right: 6px;
+  }
+</style>
+
+<div class="container contact-container mt-5">
+
+  <!-- Header -->
+  <h2 class="contact-title">Department Contacts</h2>
+  <p class="contact-subtitle">Institute of Engineering & Rural Technology, Prayagraj</p>
+
+  <!-- Departments -->
+  <div class="dept-grid">
+
+    <!-- Accounts -->
+    <div class="dept-card">
+      <h5 class="dept-title">Accounts Department</h5>
+      <p class="dept-info"><i class="fa-solid fa-phone"></i> +91 9876543210</p>
+      <p class="dept-info"><i class="fa-solid fa-envelope"></i> accounts@iert.edu</p>
+    </div>
+
+    <!-- Admin -->
+    <div class="dept-card">
+      <h5 class="dept-title">Administration Office</h5>
+      <p class="dept-info"><i class="fa-solid fa-phone"></i> +91 9123456780</p>
+      <p class="dept-info"><i class="fa-solid fa-envelope"></i> admin@iert.edu</p>
+    </div>
+
+    <!-- CSE -->
+    <div class="dept-card">
+      <h5 class="dept-title">Computer Science Dept.</h5>
+      <p class="dept-info"><i class="fa-solid fa-phone"></i> +91 9988776655</p>
+      <p class="dept-info"><i class="fa-solid fa-envelope"></i> cse@iert.edu</p>
+    </div>
+
+    <!-- Electrical -->
+    <div class="dept-card">
+      <h5 class="dept-title">Electrical Engineering</h5>
+      <p class="dept-info"><i class="fa-solid fa-phone"></i> +91 9876501234</p>
+      <p class="dept-info"><i class="fa-solid fa-envelope"></i> electrical@iert.edu</p>
+    </div>
+
+    <!-- Mechanical -->
+    <div class="dept-card">
+      <h5 class="dept-title">Mechanical Engineering</h5>
+      <p class="dept-info"><i class="fa-solid fa-phone"></i> +91 9765432109</p>
+      <p class="dept-info"><i class="fa-solid fa-envelope"></i> mechanical@iert.edu</p>
+    </div>
+
+    <!-- Civil -->
+    <div class="dept-card">
+      <h5 class="dept-title">Civil Engineering</h5>
+      <p class="dept-info"><i class="fa-solid fa-phone"></i> +91 9012345678</p>
+      <p class="dept-info"><i class="fa-solid fa-envelope"></i> civil@iert.edu</p>
+    </div>
+
+  </div>
+</div>

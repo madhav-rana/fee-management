@@ -1,0 +1,196 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<div class="container my-5">
+  <div class="text-center mb-4">
+    <h1 class="fw-bold text-dark">Pay Fee</h1>
+    <p class="text-muted">
+      Student: <span class="fw-bold text-primary"><%= student.name %></span> (Roll No: <%= student.rollNo %>)
+    </p>
+  </div>
+
+  <% if (fineAmount > 0) { %>
+    <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+        <div>
+            <strong>Late Fine Applied:</strong> Your fees due date (<%= student.feeStructure.dueDate.toLocaleDateString() %>) has passed away. 
+            <strong>₹<%= fineAmount.toLocaleString() %></strong> total fine has been added to your total.
+        </div>
+    </div>
+  <% } %>
+
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+    <div class="card-header bg-success text-white fw-bold py-3">
+      <i class="bi bi-credit-card-2-back me-2"></i> Payment Form
+    </div>
+
+    <div class="card-body p-4 bg-white">
+      <form action="/api/v1/payments" method="POST" id="paymentForm">
+
+        <input type="hidden" name="studentId" id="studentId" value="<%= student._id %>">
+
+        <div class="row mb-3">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Course</label>
+            <input type="text" class="form-control bg-light border-0" value="<%= student.course %>" disabled>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Academic Year</label>
+            <input type="text" class="form-control bg-light border-0" value="<%= student.feeStructure.academicYear %>" disabled>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Total Fee</label>
+            <input type="text" class="form-control bg-light border-0" value="₹<%= expectedTotal.toLocaleString() %>" disabled>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Fine Amount</label>
+            <input type="text" class="form-control bg-light border-0 text-danger fw-bold" value="+ ₹<%= fineAmount.toLocaleString() %>" disabled>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase text-danger">Total Outstanding</label>
+            <input type="text" id="remainingDisplay" class="form-control bg-light border-0 fw-bold text-danger" 
+                   value="₹<%= remainingBalance.toLocaleString() %>" disabled>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="amountPaid" class="form-label fw-bold">Amount to Pay (₹)</label>
+          <input type="number" min="1" max="<%= remainingBalance %>" class="form-control form-control-lg border-success shadow-sm" 
+                 name="amountPaid" id="amountPaid" placeholder="Enter amount to pay" required>
+          <div class="form-text text-muted">Your total fees including fine is ₹<%= remainingBalance.toLocaleString() %> .</div>
+        </div>
+
+        <div class="mb-4">
+          <label for="paymentMode" class="form-label fw-bold text-dark">Payment Mode</label>
+          <select class="form-select border-success shadow-sm" name="paymentMode" id="paymentMode" required>
+            <option value="">-- Select Payment Mode --</option>
+            <% if (isAuthenticated) { %>
+              <option value="cash">Cash</option>
+            <% } %>
+            <option value="card">Card</option>
+            <option value="upi">UPI / Online (Razorpay)</option>
+            <option value="bank-transfer">Bank Transfer</option>
+          </select>
+        </div>
+
+        <div class="text-center pt-3 border-top">
+          <button type="submit" id="submitBtn" class="btn btn-success btn-lg px-5 rounded-pill shadow me-2">
+            <i class="bi bi-shield-lock-fill me-2"></i>Submit Payment
+          </button>
+          <!-- <a href="/admin/students/search?query=<%= student.rollNo %>" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
+            <i class="bi bi-arrow-left me-2"></i>Back
+          </a> -->
+          <!-- <a href="/api/v1/students/search?query=<%= student.rollNo %>" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
+            <i class="bi bi-arrow-left me-2"></i>Back
+          </a> -->
+          <!-- <a href="/api/v1/students" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
+            <i class="bi bi-arrow-left me-2"></i>Cancel
+          </a> -->
+          <% if (isAuthenticated) { %>
+            <a href="/api/v1/admin/students" class="btn btn-secondary btn-lg ms-2">
+              <i class="bi bi-arrow-left me-2"></i>Cancel
+            </a>
+          <% } else { %>
+            <a href="/api/v1/students" class="btn btn-secondary btn-lg ms-2">
+              <i class="bi bi-arrow-left me-2"></i>Cancel
+            </a>
+          <% } %>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 1. Live Balance Update
+  const remainingDisplay = document.getElementById("remainingDisplay");
+  const amountInput = document.getElementById("amountPaid");
+  const totalOutstanding = parseFloat("<%= remainingBalance %>") || 0;
+
+  amountInput.addEventListener("input", () => {
+    let paid = parseFloat(amountInput.value) || 0;
+    if (paid > totalOutstanding) {
+        paid = totalOutstanding;
+        amountInput.value = totalOutstanding;
+    }
+    const newBalance = (totalOutstanding - paid).toLocaleString('en-IN');
+    remainingDisplay.value = `₹${newBalance}`;
+  });
+
+  // // 2. Razorpay Order Flow
+  // const paymentForm = document.getElementById('paymentForm');
+  // const submitBtn = document.getElementById('submitBtn');
+  // const studentId = document.getElementById('studentId').value;
+
+  // paymentForm.addEventListener('submit', async function(e) {
+  //   const mode = document.getElementById('paymentMode').value;
+  //   const amount = amountInput.value;
+
+  //   if (mode === 'upi') {
+  //     e.preventDefault(); 
+  //     submitBtn.disabled = true;
+  //     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+  //     try {
+  //       const response = await fetch('/payments/create-order', {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({ 
+  //             amount: amount,
+  //             studentId: studentId 
+  //         })
+  //       });
+  //       const data = await response.json();
+
+  //       if (data.error) {
+  //         alert("Order failed: " + data.error);
+  //         submitBtn.disabled = false;
+  //         submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
+  //         return;
+  //       }
+
+  //       const options = {
+  //         "key": "<%= process.env.RAZORPAY_KEY_ID %>", 
+  //         "amount": data.amount,
+  //         "currency": "INR",
+  //         "name": "Fee Management System",
+  //         "description": "Fee for <%= student.name %>",
+  //         "order_id": data.id,
+  //         "handler": function (response) {
+  //           const hiddenInput = document.createElement('input');
+  //           hiddenInput.type = 'hidden';
+  //           hiddenInput.name = 'razorpay_payment_id';
+  //           hiddenInput.value = response.razorpay_payment_id;
+  //           paymentForm.appendChild(hiddenInput);
+  //           paymentForm.submit(); 
+  //         },
+  //         "modal": {
+  //           "ondismiss": function() {
+  //               submitBtn.disabled = false;
+  //               submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
+  //           }
+  //         },
+  //         "prefill": { "name": "<%= student.name %>" },
+  //         "theme": { "color": "#198754" }
+  //       };
+
+  //       const rzp = new Razorpay(options);
+  //       rzp.open();
+
+  //     } catch (err) {
+  //       console.error("Payment Error:", err);
+  //       alert("Server connection failed.");
+  //       submitBtn.disabled = false;
+  //       submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
+  //     }
+  //   }
+  // });
+</script>

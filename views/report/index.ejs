@@ -1,0 +1,98 @@
+<% layout("layouts/boilerplate") %>
+
+
+<style>
+  .report-card {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: #ffffff;
+  }
+  .report-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+  }
+  .icon-circle {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+  .report-container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  }
+</style>
+
+<div class="container my-5">
+  <div class="report-container">
+    <div class="mb-5">
+      <h2 class="fw-bold mb-2" style="color: #2c3e50;">
+        <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Analytical Reports
+      </h2>
+      <p class="text-muted">
+        View and generate comprehensive reports related to fees, student enrollments, and daily collections.
+      </p>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm report-card p-3">
+          <div class="card-body">
+            <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+              <i class="bi bi-diagram-3 fs-4"></i>
+            </div>
+            <h5 class="fw-bold mb-3">Branch-wise Fee Report</h5>
+            <p class="card-text text-muted mb-4 small">
+              Detailed breakdown of expected, collected, and pending fees categorized by academic branches.
+            </p>
+            <a href="/api/v1/reports/branch" class="btn btn-primary w-100 rounded-pill">
+              <i class="bi bi-eye me-2"></i>View Report
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm report-card p-3">
+          <div class="card-body">
+            <div class="icon-circle bg-success bg-opacity-10 text-success">
+              <i class="bi bi-calendar-range fs-4"></i>
+            </div>
+            <h5 class="fw-bold mb-3">Duration-wise Collection</h5>
+            <p class="card-text text-muted mb-4 small">
+              Analyze revenue streams and fee collection performance within a specific custom date range.
+            </p>
+            <a href="/api/v1/reports/duration" class="btn btn-success w-100 rounded-pill">
+              <i class="bi bi-eye me-2"></i>View Report
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm report-card p-3">
+          <div class="card-body">
+            <div class="icon-circle bg-warning bg-opacity-10 text-warning">
+              <i class="bi bi-person-check fs-4"></i>
+            </div>
+            <h5 class="fw-bold mb-3">Student Fee Status</h5>
+            <p class="card-text text-muted mb-4 small">
+              Monitor individual student financial standing filtered by paid, partial, or unpaid statuses.
+            </p>
+            <a href="/api/v1/reports/student-status" class="btn btn-warning text-dark w-100 rounded-pill fw-bold">
+              <i class="bi bi-eye me-2"></i>View Report
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

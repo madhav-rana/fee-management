@@ -1,0 +1,109 @@
+<style>
+  .admin-navbar {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 0.7rem 1.2rem;
+  }
+
+  .admin-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-right: 4px;
+    transition: all 0.25s ease;
+    font-weight: 500;
+  }
+
+  .admin-navbar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff !important;
+  }
+
+  .admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .admin-profile i {
+    font-size: 1.6rem;
+  }
+
+  .logout-link {
+    background: #ff4d4d;
+    color: #fff !important;
+    border-radius: 6px;
+    padding: 6px 14px !important;
+    margin-left: 10px;
+  }
+
+  .logout-link:hover {
+    background: #e60000;
+  }
+
+  .nav-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 10px;
+  }
+
+  .navbar-toggler {
+    border: none;
+  }
+
+  .navbar-toggler i {
+    color: white;
+  }
+</style>
+
+<nav class="navbar navbar-expand-md admin-navbar sticky-top">
+  <div class="container-fluid">
+
+    <!-- Toggle (mobile) -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <!-- Left: Nav Links -->
+      <div class="navbar-nav me-auto align-items-center">
+        <a class="nav-link" href="/api/v1/admin/dashboard">
+          <i class="fa-solid fa-gauge me-1"></i> Dashboard
+        </a>
+        <a class="nav-link" href="/api/v1/admin/students">
+          <i class="fa-solid fa-users me-1"></i> Students
+        </a>
+        <a class="nav-link" href="/api/v1/admin/payments">
+          <i class="fa-solid fa-money-bill-wave me-1"></i> Payments
+        </a>
+        <a class="nav-link" href="/api/v1/fees">
+          <i class="fa-solid fa-file-invoice-dollar me-1"></i> Fee Structure
+        </a>
+        <a class="nav-link" href="/api/v1/admin/students/add">
+          <i class="fa-solid fa-user-plus me-1"></i> Add Student
+        </a>
+        <a class="nav-link" href="/api/v1/reports">
+          <i class="fa-solid fa-chart-column me-1"></i> Reports
+        </a>
+      </div>
+
+      <!-- Right: User + Logout -->
+      <div class="navbar-nav align-items-center">
+        <div class="nav-divider d-none d-md-block"></div>
+        <div class="admin-profile me-2">
+          <i class="fa-solid fa-circle-user"></i>
+          <span><%= admin?.username || "Admin" %></span>
+        </div>
+        <a class="nav-link logout-link" href="/api/v1/admin/logout">
+          <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+        </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
