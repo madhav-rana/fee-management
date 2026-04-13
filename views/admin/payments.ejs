@@ -39,16 +39,26 @@
               <%= new Date(p.paymentDate).toLocaleDateString('en-IN') %>
             </td>
 
-            <td>
-              <% if (p.receiptPdfUrl) { %>
-                <a href="<%= p.receiptPdfUrl %>" target="_blank" class="btn btn-sm btn-success px-3 shadow-sm">
+            <!-- <td>
+              < if (p.receiptPdfUrl) { %>
+                <a href="<= p.receiptPdfUrl %>" target="_blank" class="btn btn-sm btn-success px-3 shadow-sm">
                   <i class="bi bi-eye"></i> View
                 </a>
-              <% } else { %>
-                <a href="/api/v1/payments/receipt/<%= p._id %>/pdf" class="btn btn-sm btn-warning px-3 shadow-sm text-dark">
+              < } else { %>
+                <a href="/api/v1/payments/receipt/<= p._id %>/pdf" class="btn btn-sm btn-warning px-3 shadow-sm text-dark">
                   <i class="bi bi-file-earmark-pdf"></i> Generate
                 </a>
-              <% } %>
+              < } %>
+            </td> -->
+            <td>
+              <a href="/api/v1/payments/receipt/<%= p._id %>" 
+                class="btn btn-sm btn-primary px-3 shadow-sm">
+                <i class="bi bi-eye"></i> View
+              </a>
+              <a href="/api/v1/payments/receipt/<%= p._id %>/pdf" 
+                class="btn btn-sm btn-success px-3 shadow-sm">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+              </a>
             </td>
           </tr>
         <% }) %>

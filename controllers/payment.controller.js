@@ -18,7 +18,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ================= PAYMENT PAGE =================
+// PAYMENT PAGE
 exports.renderPaymentPage = async (req, res) => {
   const { studentId } = req.query;
 
@@ -57,7 +57,7 @@ exports.renderPaymentPage = async (req, res) => {
   }); // updated: removed isAdmin — already in res.locals via app.js
 };
 
-// ================= SAVE PAYMENT =================
+// SAVE PAYMENT
 exports.savePayment = async (req, res) => {
   const { studentId, amountPaid, paymentMode, razorpay_payment_id } = req.body;
 
@@ -136,7 +136,7 @@ exports.savePayment = async (req, res) => {
   });
 };
 
-// ================= RECEIPT =================
+// RECEIPT
 exports.getReceipt = async (req, res) => {
   const payment = await Payment.findById(req.params.paymentId).populate({
     path: "student",
@@ -158,7 +158,43 @@ exports.getReceipt = async (req, res) => {
   res.render("receipt", { payment, expectedTotal });
 };
 
-// ================= PDF =================
+// PDF 
+// exports.getReceiptPDF = async (req, res) => {
+//   const payment = await Payment.findById(req.params.id).populate({
+//     path: "student",
+//     populate: ["branch", "feeStructure"],
+//   });
+
+//   if (!payment || !payment.student || !payment.student.feeStructure) {
+//     req.flash("error", "Missing data for PDF generation"); // 🆕 flash instead of res.status().send()
+//     return res.redirect("/api/v1/students");
+//   }
+
+//   // if already uploaded return directly
+//   if (payment.receiptPdfUrl) {
+//     return res.redirect(payment.receiptPdfUrl);
+//   }
+
+//   // regenerate if not uploaded yet
+//   const fine = calculateFine(
+//     payment.student.feeStructure.dueDate,
+//     payment.student.feeStructure.finePerWeek
+//   );
+
+//   const pdfBuffer = await generateReceiptPDF({
+//     ...payment.toObject(),
+//     student: payment.student,
+//     fineApplied: fine,
+//   });
+
+//   const pdfUrl = await uploadToCloudinary(pdfBuffer, payment.receiptNumber);
+
+//   payment.receiptPdfUrl = pdfUrl;
+//   await payment.save();
+
+//   res.redirect(pdfUrl);
+// };
+
 exports.getReceiptPDF = async (req, res) => {
   const payment = await Payment.findById(req.params.id).populate({
     path: "student",
@@ -166,16 +202,10 @@ exports.getReceiptPDF = async (req, res) => {
   });
 
   if (!payment || !payment.student || !payment.student.feeStructure) {
-    req.flash("error", "Missing data for PDF generation"); // 🆕 flash instead of res.status().send()
+    req.flash("error", "Missing data for PDF generation");
     return res.redirect("/api/v1/students");
   }
 
-  // if already uploaded return directly
-  if (payment.receiptPdfUrl) {
-    return res.redirect(payment.receiptPdfUrl);
-  }
-
-  // regenerate if not uploaded yet
   const fine = calculateFine(
     payment.student.feeStructure.dueDate,
     payment.student.feeStructure.finePerWeek
@@ -187,10 +217,12 @@ exports.getReceiptPDF = async (req, res) => {
     fineApplied: fine,
   });
 
-  const pdfUrl = await uploadToCloudinary(pdfBuffer, payment.receiptNumber);
+  // ✅ Stream directly to browser — no Cloudinary needed
+  res.set({
+    "Content-Type": "application/pdf",
+    "Content-Disposition": `attachment; filename="${payment.receiptNumber}.pdf"`,
+    "Content-Length": pdfBuffer.length,
+  });
 
-  payment.receiptPdfUrl = pdfUrl;
-  await payment.save();
-
-  res.redirect(pdfUrl);
+  return res.send(pdfBuffer);
 };
