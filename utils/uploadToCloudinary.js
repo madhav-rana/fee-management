@@ -5,20 +5,29 @@ function uploadToCloudinary(buffer, receiptNumber) {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        resource_type: "raw", 
-        access_mode: "public",   // ✅ ADD THIS for view or generate
+        resource_type: "raw",       // PDF ke liye mandatory
         folder: "fee-receipts",
-        // 👈 Sirf receiptNumber do, extra .pdf ya backticks mat lagao
         public_id: receiptNumber,
-        format: "pdf",  // ✅ explicit file type
-        // Without it Cloudinary usually detects it automatically from the buffer, so it's not a bug — just more explicit and safer. 
-        overwrite: true
+        format: "pdf",
+        overwrite: true,
+        
+        // 🚩 YE TEEN LINES SABSE IMPORTANT HAIN 🚩
+        access_mode: "public",      // Public access allow karega
+        type: "upload",             // Authenticated type ko overwrite karega
+        access_control: [
+            { access_type: "anonymous" } // Bina login ke viewing allow karega
+        ]
       },
       (error, result) => {
-        if (error) return reject(error);
+        if (error) {
+          console.error("❌ Cloudinary Upload Error:", error);
+          return reject(error);
+        }
+        // Secure URL return karega
         resolve(result.secure_url);
       }
     );
+
     streamifier.createReadStream(buffer).pipe(uploadStream);
   });
 }
