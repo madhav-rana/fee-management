@@ -7,6 +7,7 @@ const calculateExpectedTotal = require("../utils/calculateExpectedTotal"); // ğŸ
 const fs = require("fs");
 const csv = require("csv-parser");
 
+
 // DASHBOARD 
 exports.getDashboard = async (req, res) => {
   const students = await Student.find().populate("feeStructure");
@@ -36,11 +37,11 @@ exports.getDashboard = async (req, res) => {
   });
 };
 
-// STUDENTS
+// SEARCH STUDENTS
 exports.getStudentSearchPage = (req, res) => {
   res.render("admin/student/student_search_form");
 };
-
+// SHOW STUDENT
 exports.searchStudent = async (req, res) => {
   const { query, year } = req.query;
 
@@ -80,6 +81,26 @@ exports.searchStudent = async (req, res) => {
   });
 };
 
+//EDIT STUDENT
+// 1. Edit Form Render karna
+exports.renderEditForm = async (req, res) => {
+    const { id } = req.params;
+    const student = await Student.findById(id).populate("branch");
+    const branches = await Branch.find();
+    
+    // ğŸš© PATH FIXED: Kyunki file 'admin/student/' folder ke andar hai
+    res.render("admin/student/edit", { student, branches }); 
+};
+
+exports.updateStudent = async (req, res) => {
+  const { id } = req.params;
+  
+  // 1. Pehle data update karo
+  const updatedStudent = await Student.findByIdAndUpdate(id, { ...req.body }, { new: true });
+  
+  req.flash("success", "Student information updated!");
+  res.redirect(`/api/v1/admin/students/search?query=${updatedStudent.rollNo}`);
+};
 // PAYMENTS 
 exports.getAllPayments = async (req, res) => {
   const payments = await Payment.find()

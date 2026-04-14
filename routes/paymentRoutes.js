@@ -9,4 +9,8 @@ router.post("/", wrapAsync(paymentController.savePayment)); // 🆕 wrapAsync
 router.get("/receipt/:paymentId", wrapAsync(paymentController.getReceipt)); // 🆕 wrapAsync
 router.get("/receipt/:id/pdf", wrapAsync(paymentController.getReceiptPDF)); // 🆕 wrapAsync
 
+router.post("/create-order", wrapAsync(paymentController.createOrder));
+
+
+
 module.exports = router;

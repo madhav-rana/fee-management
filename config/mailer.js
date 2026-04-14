@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // const nodemailer = require("nodemailer");
 
 // const transporter = nodemailer.createTransport({
@@ -26,10 +27,13 @@
 
 
 
+=======
+>>>>>>> origin/Siddharth
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
+<<<<<<< HEAD
   port: 465,
   secure: true,
   auth: {
@@ -42,6 +46,14 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 15000,
+=======
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS  //this must be App Password not your Gmail password
+  }
+>>>>>>> origin/Siddharth
 });
 
 transporter.verify((err, success) => {
@@ -52,4 +64,12 @@ transporter.verify((err, success) => {
   }
 });
 
+<<<<<<< HEAD
 module.exports = transporter;
+=======
+
+module.exports = transporter;
+
+
+// If EMAIL_PASS is your actual Gmail password it won't work — Gmail requires an App Password (generated from Google Account → Security → 2FA → App Passwords)
+>>>>>>> origin/Siddharth

@@ -125,72 +125,75 @@
     remainingDisplay.value = `₹${newBalance}`;
   });
 
-  // // 2. Razorpay Order Flow
-  // const paymentForm = document.getElementById('paymentForm');
-  // const submitBtn = document.getElementById('submitBtn');
-  // const studentId = document.getElementById('studentId').value;
+  // 2. Razorpay Order Flow
+  const paymentForm = document.getElementById('paymentForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const studentId = document.getElementById('studentId').value;
 
-  // paymentForm.addEventListener('submit', async function(e) {
-  //   const mode = document.getElementById('paymentMode').value;
-  //   const amount = amountInput.value;
+  paymentForm.addEventListener('submit', async function(e) {
+    const mode = document.getElementById('paymentMode').value;
+    const amount = amountInput.value;
 
-  //   if (mode === 'upi') {
-  //     e.preventDefault(); 
-  //     submitBtn.disabled = true;
-  //     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+    // 🚩 Important: Razorpay sirf tabhi chalega jab mode 'upi' ho
+    if (mode === 'upi') {
+      e.preventDefault(); 
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
 
-  //     try {
-  //       const response = await fetch('/payments/create-order', {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({ 
-  //             amount: amount,
-  //             studentId: studentId 
-  //         })
-  //       });
-  //       const data = await response.json();
+      try {
+        // 🚩 FIXED PATH: Added /api/v1
+        const response = await fetch('/api/v1/payments/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+              amount: amount,
+              studentId: studentId 
+          })
+        });
+        
+        const data = await response.json();
 
-  //       if (data.error) {
-  //         alert("Order failed: " + data.error);
-  //         submitBtn.disabled = false;
-  //         submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
-  //         return;
-  //       }
+        if (data.error) {
+          alert("Order failed: " + data.error);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
+          return;
+        }
 
-  //       const options = {
-  //         "key": "<%= process.env.RAZORPAY_KEY_ID %>", 
-  //         "amount": data.amount,
-  //         "currency": "INR",
-  //         "name": "Fee Management System",
-  //         "description": "Fee for <%= student.name %>",
-  //         "order_id": data.id,
-  //         "handler": function (response) {
-  //           const hiddenInput = document.createElement('input');
-  //           hiddenInput.type = 'hidden';
-  //           hiddenInput.name = 'razorpay_payment_id';
-  //           hiddenInput.value = response.razorpay_payment_id;
-  //           paymentForm.appendChild(hiddenInput);
-  //           paymentForm.submit(); 
-  //         },
-  //         "modal": {
-  //           "ondismiss": function() {
-  //               submitBtn.disabled = false;
-  //               submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
-  //           }
-  //         },
-  //         "prefill": { "name": "<%= student.name %>" },
-  //         "theme": { "color": "#198754" }
-  //       };
+        const options = {
+          "key": "<%= process.env.RAZORPAY_KEY_ID %>", 
+          "amount": data.amount,
+          "currency": "INR",
+          "name": "Fee Management System",
+          "description": "Fee for <%= student.name %>",
+          "order_id": data.id,
+          "handler": function (response) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'razorpay_payment_id';
+            hiddenInput.value = response.razorpay_payment_id;
+            paymentForm.appendChild(hiddenInput);
+            paymentForm.submit(); 
+          },
+          "modal": {
+            "ondismiss": function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
+            }
+          },
+          "prefill": { "name": "<%= student.name %>" },
+          "theme": { "color": "#198754" }
+        };
 
-  //       const rzp = new Razorpay(options);
-  //       rzp.open();
+        const rzp = new Razorpay(options);
+        rzp.open();
 
-  //     } catch (err) {
-  //       console.error("Payment Error:", err);
-  //       alert("Server connection failed.");
-  //       submitBtn.disabled = false;
-  //       submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
-  //     }
-  //   }
-  // });
+      } catch (err) {
+        console.error("Payment Error:", err);
+        alert("Server connection failed.");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
+      }
+    }
+  });
 </script>

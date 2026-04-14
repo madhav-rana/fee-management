@@ -19,6 +19,45 @@ const razorpay = new Razorpay({
 });
 
 // PAYMENT PAGE
+// ================= 1. RAZORPAY ORDER CREATION =================
+exports.createOrder = async (req, res) => {
+  try {
+    const { amount, studentId } = req.body;
+
+    // Debugging: Check if keys are loaded (Terminal check)
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+        console.error("❌ ERROR: Razorpay Keys are missing in .env file");
+        return res.status(500).json({ error: "Server Configuration Error: Keys missing" });
+    }
+
+    if (!amount || !studentId) {
+      return res.status(400).json({ error: "Amount and Student ID are required" });
+    }
+
+    const options = {
+      amount: Math.round(Number(amount) * 100), // Paise mein convert
+      currency: "INR",
+      receipt: `rcpt_${studentId.substring(0, 5)}_${Date.now()}`,
+    };
+
+    console.log(`⏳ Creating Order for Student: ${studentId}, Amount: ${amount}`);
+    
+    const order = await razorpay.orders.create(options);
+    
+    console.log("✅ Razorpay Order Created Successfully:", order.id);
+    res.status(200).json(order);
+
+  } catch (err) {
+    // 🚩 Authentication Check (401 Fix)
+    if (err.statusCode === 401) {
+        console.error("🔥 Razorpay Auth Error: Your Key ID or Secret is incorrect.");
+    }
+    console.error("🔥 Razorpay Order Error Detail:", err);
+    res.status(500).json({ error: err.description || "Could not create Razorpay order" });
+  }
+};
+
+// ================= 2. PAYMENT PAGE =================
 exports.renderPaymentPage = async (req, res) => {
   const { studentId } = req.query;
 
@@ -64,6 +103,8 @@ exports.savePayment = async (req, res) => {
   if (!studentId || !amountPaid || !paymentMode) {
     req.flash("error", "Missing required fields"); // 🆕 flash instead of res.status().send()
     return res.redirect("/api/v1/payments/new");
+    // req.flash("error", "Missing required fields");
+    // return res.redirect(`/api/v1/payments/new?studentId=${studentId}`);
   }
 
   const student = await Student.findById(studentId)
