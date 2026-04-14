@@ -1,0 +1,57 @@
+<% layout('layouts/boilerplate.ejs') %>
+
+<div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white fw-bold py-3">
+            <i class="bi bi-pencil-square me-2"></i>Edit Student Details
+        </div>
+        <div class="card-body p-4 bg-white">
+            <form action="/api/v1/admin/students/<%= student._id %>" method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Full Name</label>
+                        <input type="text" name="name" class="form-control border-primary-subtle" value="<%= student.name %>" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Email Address</label>
+                        <input type="email" name="email" class="form-control border-primary-subtle" value="<%= student.email %>" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Contact Number</label>
+                        <input type="text" name="contactNumber" class="form-control border-primary-subtle" value="<%= student.contactNumber %>" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Year (Current)</label>
+                        <select name="year" class="form-select border-primary-subtle" required>
+                            <option value="1" <%= student.year == 1 ? 'selected' : '' %>>1st Year</option>
+                            <option value="2" <%= student.year == 2 ? 'selected' : '' %>>2nd Year</option>
+                            <option value="3" <%= student.year == 3 ? 'selected' : '' %>>3rd Year</option>
+                            <option value="4" <%= student.year == 4 ? 'selected' : '' %>>4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Residential Address</label>
+                    <textarea name="address" class="form-control border-primary-subtle" rows="3"><%= student.address %></textarea>
+                </div>
+
+                <div class="text-center pt-3 border-top">
+                    <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow-sm me-2">
+                        <i class="bi bi-check-circle-fill me-2"></i>Update Student
+                    </button>
+                    
+                    <a href="/api/v1/admin/students/<%= student._id %>" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

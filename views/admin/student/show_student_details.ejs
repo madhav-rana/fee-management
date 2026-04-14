@@ -46,6 +46,17 @@
                 <%= student.isHosteller ? '❌ Deactivate Hostel' : '🏠 Activate Hostel' %>
             </button>
         </form>
+        <div class="d-flex gap-2">
+            <a href="/api/v1/admin/students/<%= student._id %>/edit" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                <i class="bi bi-pencil-square"></i> Edit Info
+            </a>
+
+            <form action="/api/v1/admin/students/toggle-hostel/<%= student._id %>" method="POST">
+                <button type="submit" class="btn btn-sm <%= student.isHosteller ? 'btn-outline-danger' : 'btn-outline-success' %> rounded-pill">
+                    <%= student.isHosteller ? '❌ Deactivate Hostel' : '🏠 Activate Hostel' %>
+                </button>
+            </form>
+        </div>
       </div>
     </div>
   </div>
@@ -147,9 +158,13 @@
                 <tr>
                   <td><%= index + 1 %></td>
                   <td class="fw-bold text-success">₹<%= p.amountPaid.toFixed(2) %></td>
+<<<<<<< HEAD
                     <td class="text-uppercase small fw-bold text-muted">
     <%= p.paymentMode %>
 </td>
+=======
+                  <td class="text-uppercase small fw-bold text-muted"><%= p.paymentMode %></td>
+>>>>>>> origin/Siddharth
                   <td><code><%= p.receiptNumber %></code></td>
                   <td><%= new Date(p.paymentDate).toLocaleDateString() %></td>
                 </tr>
