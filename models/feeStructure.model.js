@@ -47,7 +47,7 @@ const feeStructureSchema = new mongoose.Schema({
   },
   totalAmount: {
     type: Number,
-    min: 0 //Since it's auto-calculated, add protection
+    min: 0 //Since it's auto-calculated, add protection by using min valu 0
   },
   
   dueDate: {
@@ -60,7 +60,7 @@ const feeStructureSchema = new mongoose.Schema({
     min: 0
   }
 });
-// 🔥 AUTO-CALCULATE totalAmount
+//  AUTO-CALCULATE totalAmount
 feeStructureSchema.pre("save", function (next) {
   this.totalAmount =
     this.breakdown.tuition +
@@ -69,7 +69,6 @@ feeStructureSchema.pre("save", function (next) {
     (this.breakdown.activity || 0) +
     (this.breakdown.others || 0) + 
     this.hostelFee;
-
 
 });
 

@@ -37,16 +37,17 @@ const studentSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    require: true,
+    required: true,
     match: /.+\@.+\..+/
   },
   address: {
-    type: String
+    type: String,
+    required: true
   },
   dateOfAdmission: {
     type: Date,
     required: true,
-    default: Date.now
+    // default: Date.now
   },
   feeStructure: {
     type: mongoose.Schema.Types.ObjectId,

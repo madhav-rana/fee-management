@@ -3,7 +3,8 @@ const Student = require("../models/student.model");
 const Payment = require("../models/payment.model");
 const FeeStructure = require("../models/feeStructure.model");
 const Branch = require("../models/branch.model");
-const calculateExpectedTotal = require("../utils/calculateExpectedTotal"); // 🆕
+const calculateExpectedTotal = require("../utils/calculateExpectedTotal");
+
 const fs = require("fs");
 const csv = require("csv-parser");
 
@@ -16,7 +17,7 @@ exports.getDashboard = async (req, res) => {
   let totalFeeExpected = 0;
   students.forEach((student) => {
     if (student.feeStructure) {
-      totalFeeExpected += calculateExpectedTotal(student); // 🆕 utility used
+      totalFeeExpected += calculateExpectedTotal(student); // utility used
     }
   });
 
@@ -37,15 +38,18 @@ exports.getDashboard = async (req, res) => {
   });
 };
 
-// SEARCH STUDENTS
+
+// SEARCH STUDENTS FORM
 exports.getStudentSearchPage = (req, res) => {
-  res.render("admin/student/student_search_form");
+  res.render("admin/student/search");
 };
-// SHOW STUDENT
+
+
+// SHOW STUDENT DETAILS
 exports.searchStudent = async (req, res) => {
   const { query, year } = req.query;
 
-  if (!query) { // 🆕
+  if (!query) {
     req.flash("error", "Please enter a name or roll number to search");
     return res.redirect("/api/v1/admin/students");
   }
@@ -58,21 +62,21 @@ exports.searchStudent = async (req, res) => {
   const student = await Student.findOne(filter).populate("branch feeStructure");
 
   if (!student) {
-    req.flash("error", `No student found for "${query}"`); // updated
+    req.flash("error", `No student found for "${query}"`);
     return res.redirect("/api/v1/admin/students");
   }
 
-  if (!student.feeStructure) { // 🆕
+  if (!student.feeStructure) {
     req.flash("error", "Student has no fee structure assigned. Please contact admin.");
     return res.redirect("/api/v1/admin/students");
   }
 
   const payments = await Payment.find({ student: student._id }).sort({ paymentDate: 1 });
   const totalPaid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
-  const expectedTotal = calculateExpectedTotal(student); // 🆕 utility used
+  const expectedTotal = calculateExpectedTotal(student); // utility used
   const remainingBalance = expectedTotal - totalPaid;
 
-  res.render("admin/student/show_student_details", {
+  res.render("admin/student/show", {
     student,
     payments,
     totalPaid,
@@ -81,27 +85,27 @@ exports.searchStudent = async (req, res) => {
   });
 };
 
-//EDIT STUDENT
-// 1. Edit Form Render karna
+
+//EDIT STUDENT DETAILS
 exports.renderEditForm = async (req, res) => {
-    const { id } = req.params;
-    const student = await Student.findById(id).populate("branch");
-    const branches = await Branch.find();
-    
-    // 🚩 PATH FIXED: Kyunki file 'admin/student/' folder ke andar hai
-    res.render("admin/student/edit", { student, branches }); 
+  const { id } = req.params;
+  const student = await Student.findById(id).populate("branch");
+  const branches = await Branch.find();
+
+  res.render("admin/student/edit", { student, branches }); 
 };
 
+// UPDATE STUDENT DETAILS
 exports.updateStudent = async (req, res) => {
   const { id } = req.params;
-  
-  // 1. Pehle data update karo
   const updatedStudent = await Student.findByIdAndUpdate(id, { ...req.body }, { new: true });
   
   req.flash("success", "Student information updated!");
   res.redirect(`/api/v1/admin/students/search?query=${updatedStudent.rollNo}`);
 };
-// PAYMENTS 
+
+
+// ALL PAYMENTS 
 exports.getAllPayments = async (req, res) => {
   const payments = await Payment.find()
     .populate({ path: "student", populate: ["branch"] })
@@ -110,52 +114,59 @@ exports.getAllPayments = async (req, res) => {
   res.render("admin/payments", { payments });
 };
 
-// HOSTEL 
+
+// ACTIVATE / DEACTIVATE HOSTEL 
 exports.toggleHostel = async (req, res) => {
   const student = await Student.findById(req.params.id);
 
   if (!student) {
-    req.flash("error", "Student not found"); // 🆕 flash instead of silent redirect
+    req.flash("error", "Student not found");
     return res.redirect("/api/v1/admin/students");
   }
 
-  student.isHosteller = !student.isHosteller;
+  student.isHosteller = !student.isHosteller; //update hostal status
+
   await student.save();
 
-  req.flash("success", `Hostel status updated for ${student.name}`); // 🆕
+  req.flash("success", `Hostel status updated for ${student.name}`);
   res.redirect(`/api/v1/admin/students/search?query=${encodeURIComponent(student.rollNo)}`);
 };
 
-// ADD STUDENT 
+
+// ADD NEW STUDENT FORM
 exports.getAddStudentPage = async (req, res) => {
   const branches = await Branch.find();
   const feeStructures = await FeeStructure.find();
-  res.render("admin/student/addStudent", { branches, feeStructures });
+  res.render("admin/student/new", { branches, feeStructures });
 };
 
+// ADD NEW STUDENT
 exports.addStudent = async (req, res) => {
+  console.log("Student :", req.body);
   const {
     name, rollNo, course, branch, year,
     contactNumber, email, isHosteller,
-    feeStructure, admissionDate, address,
+    feeStructure, dateOfAdmission, address,
   } = req.body;
 
   const branches = await Branch.find();
   const feeStructures = await FeeStructure.find();
 
-  if (!name || !rollNo || !course || !branch || !year ||
-      !contactNumber || !feeStructure || !admissionDate) { // updated: email/address not strictly required
-    req.flash("error", "Please fill all required fields"); // 🆕 flash instead of render error
-    return res.render("admin/student/addStudent", { branches, feeStructures });
+  if (!name || !rollNo || !course || !branch || !year || !email || !address ||
+      !contactNumber || !feeStructure || !dateOfAdmission) { 
+
+    req.flash("error", "Please fill all required fields");
+    // return res.render("admin/student/new", { branches, feeStructures });
+    return res.redirect("/api/v1/admin/students/add")
   }
 
   const existingStudent = await Student.findOne({
-    $or: [{ rollNo }, ...(email ? [{ email }] : [])] // 🆕 only check email if provided
+    $or: [{ rollNo }, { email }]
   });
 
   if (existingStudent) {
-    req.flash("error", "A student with this Roll No or Email already exists"); // updated
-    return res.render("admin/student/addStudent", { branches, feeStructures });
+    req.flash("error", "A student with this Roll No or Email already exists");
+    return res.redirect("/api/v1/admin/students/add")
   }
 
   await Student.create({
@@ -164,11 +175,11 @@ exports.addStudent = async (req, res) => {
     contactNumber,
     email,
     address,
-    admissionDate,
+    dateOfAdmission,
     feeStructure,
   });
 
-  req.flash("success", `Student ${name} added successfully!`); // 🆕
+  req.flash("success", `Student ${name} added successfully!`);
   res.redirect("/api/v1/admin/dashboard");
 };
 
@@ -178,8 +189,8 @@ exports.bulkUploadStudents = async (req, res) => {
   const feeStructures = await FeeStructure.find();
 
   if (!req.file) {
-    req.flash("error", "Please upload a CSV file"); // 🆕 flash instead of render error
-    return res.render("admin/student/addStudent", { branches, feeStructures });
+    req.flash("error", "Please upload a CSV file");
+    return res.redirect("/api/v1/admin/students/add")
   }
 
   const students = [];
@@ -188,9 +199,9 @@ exports.bulkUploadStudents = async (req, res) => {
   fs.createReadStream(req.file.path)
     .pipe(csv())
     .on("data", (data) => students.push(data))
-    .on("error", (err) => { // 🆕 stream error handling was missing
+    .on("error", (err) => { // stream error handling was missing
       req.flash("error", "Failed to read CSV file");
-      return res.render("admin/student/addStudent", { branches, feeStructures });
+      return res.redirect("/api/v1/admin/students/add")
     })
     .on("end", async () => {
       try {
@@ -203,6 +214,7 @@ exports.bulkUploadStudents = async (req, res) => {
         const formattedStudents = [];
 
         for (let data of students) {
+          console.log(data);
           let reason = "";
 
           if (!data.name || !data.rollNo) reason = "Missing name or rollNo";
@@ -237,9 +249,12 @@ exports.bulkUploadStudents = async (req, res) => {
         try {
           const result = await Student.insertMany(formattedStudents, { ordered: false });
           insertedCount = result.length;
+          console.log("result : ", result);
+          console.log("insertedCount : ", insertedCount);
+
         } catch (err) {
           if (err.code === 11000) {
-            err.writeErrors?.forEach((e) => { // 🆕 optional chaining
+            err.writeErrors?.forEach((e) => { // optional chaining
               const failedDoc = formattedStudents[e.index];
               failedStudents.push({
                 name: failedDoc.name,
@@ -249,14 +264,15 @@ exports.bulkUploadStudents = async (req, res) => {
             });
             insertedCount = err.result?.insertedCount || 0;
           } else {
-            throw err; // 🆕 re-throw unknown errors
+            throw err; // re-throw unknown errors
           }
         }
 
-        fs.unlinkSync(req.file.path); // cleanup uploaded file
+        fs.unlinkSync(req.file.path); // delete uploaded file
 
-        // req.flash("success", `${insertedCount} students added successfully`); // 🆕
-        // ✅ Smart flash handling
+        // req.flash("success", `${insertedCount} students added successfully`);
+
+        // Smart flash handling
         if (insertedCount === 0) {
             req.flash("error", "No students were added. Please check your CSV data.");
         } else if (failedStudents.length > 0) {
@@ -274,13 +290,13 @@ exports.bulkUploadStudents = async (req, res) => {
         //   feeStructures,
         // //   updated: removed inline success/error — using flash now
         // });
-        return res.render("admin/student/addStudent", { failedStudents, branches, feeStructures });
+        return res.render("admin/student/new", { failedStudents, branches, feeStructures });
 
       } catch (err) {
         if (req.file && fs.existsSync(req.file.path)) {
-          fs.unlinkSync(req.file.path); // 🆕 cleanup file even on error
+          fs.unlinkSync(req.file.path); // delete file even on error
         }
-        throw err; // 🆕 let wrapAsync handle it
+        throw err; // wrapAsync will handle it
       }
     });
 };
