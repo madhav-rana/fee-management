@@ -1,30 +1,27 @@
 // payment.controller.js
-const Razorpay = require("razorpay");
-
-// Models
 const Student = require("../models/student.model");
 const Payment = require("../models/payment.model");
 
-// Utils
+// Utility function from - Utils
 const generateReceiptPDF = require("../utils/generateReceiptPDF");
 const uploadToCloudinary = require("../utils/uploadToCloudinary");
 const sendReceiptEmail = require("../utils/sendReceiptEmail");
 const calculateFine = require("../utils/getLateFine");
-const calculateExpectedTotal = require("../utils/calculateExpectedTotal"); // 🆕
+const calculateExpectedTotal = require("../utils/calculateExpectedTotal");
 
-// Razorpay instance — ready for future implementation
+const Razorpay = require("razorpay");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// PAYMENT PAGE
-// ================= 1. RAZORPAY ORDER CREATION =================
+
+// RAZORPAY ORDER CREATION
 exports.createOrder = async (req, res) => {
   try {
     const { amount, studentId } = req.body;
 
-    // Debugging: Check if keys are loaded (Terminal check)
+    // Check if keys are loaded (Terminal check)
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
         console.error("❌ ERROR: Razorpay Keys are missing in .env file");
         return res.status(500).json({ error: "Server Configuration Error: Keys missing" });
@@ -57,7 +54,7 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// ================= 2. PAYMENT PAGE =================
+// PAYMENT PAGE
 exports.renderPaymentPage = async (req, res) => {
   const { studentId } = req.query;
 
@@ -70,17 +67,17 @@ exports.renderPaymentPage = async (req, res) => {
     .populate("branch")
     .populate("feeStructure");
 
-  if (!student) { // 🆕 flash instead of res.status().send()
+  if (!student) {
     req.flash("error", "Student not found");
     return res.redirect("/api/v1/students");
   }
 
-  if (!student.feeStructure) { // 🆕 flash instead of res.status().send()
+  if (!student.feeStructure) {
     req.flash("error", "No fee structure assigned to this student");
     return res.redirect("/api/v1/students");
   }
 
-  const expectedTotal = calculateExpectedTotal(student); // 🆕 utility used
+  const expectedTotal = calculateExpectedTotal(student); // utility used
   const payments = await Payment.find({ student: student._id });
   const totalPaid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
   const fine = calculateFine(student.feeStructure.dueDate, student.feeStructure.finePerWeek);
