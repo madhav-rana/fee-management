@@ -24,7 +24,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URI;
 main().catch(err => console.log("MongoDB Connection Error:", err));
 async function main() {
   await mongoose.connect(MONGO_URL);
@@ -58,7 +58,7 @@ app.use(session({
   saveUninitialized: false,
 
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL,
+    mongoUrl: process.env.MONGO_URI,
     collectionName: "sessions"
   }),
 

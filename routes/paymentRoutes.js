@@ -1,15 +1,16 @@
+// paymentRoutes.js
 const express = require("express");
 const router = express.Router();
 const paymentController = require("../controllers/payment.controller");
-const wrapAsync = require("../utils/wrapAsync");
+const wrapAsync = require("../utils/wrapAsync"); // 🆕
 
-// --- View Routes ---
-router.get("/new", wrapAsync(paymentController.renderPaymentPage));
-router.get("/receipt/:paymentId", wrapAsync(paymentController.getReceipt));
-router.get("/receipt/:id/pdf", wrapAsync(paymentController.getReceiptPDF));
+router.get("/new", wrapAsync(paymentController.renderPaymentPage)); // 🆕 wrapAsync
+router.post("/", wrapAsync(paymentController.savePayment)); // 🆕 wrapAsync
+router.get("/receipt/:paymentId", wrapAsync(paymentController.getReceipt)); // 🆕 wrapAsync
+router.get("/receipt/:id/pdf", wrapAsync(paymentController.getReceiptPDF)); // 🆕 wrapAsync
 
-// --- API / Logic Routes ---
 router.post("/create-order", wrapAsync(paymentController.createOrder));
-router.post("/", wrapAsync(paymentController.savePayment));
+
+
 
 module.exports = router;

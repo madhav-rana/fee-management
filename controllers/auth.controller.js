@@ -1,33 +1,30 @@
 const bcrypt = require("bcrypt");
-
-// Models
-const Student = require("../models/student.model");
-const Payment = require("../models/payment.model");
-const FeeStructure = require("../models/feeStructure.model");
 const Admin = require("../models/admin.model");
-const Branch = require("../models/branch.model");
 
-// AUTH 
-
-// Show login
+// SHOW LOGIN PAGE
 exports.getLogin = (req, res) => {
   res.render("admin/auth/login");
 };
 
-// Login
+
+// LOGIN
 exports.postLogin = async (req, res) => {
   const { username, password } = req.body;
 
   const admin = await Admin.findOne({ username });
 
   if (!admin || !admin.isVerified) {
-    return res.render("admin/auth/login", { error: "User does not exist" });
+    // return res.render("admin/auth/login", { error: "User does not exist" });
+    req.flash("error", "User does not exist");
+    return res.redirect("/api/v1/admin/login")
   }
 
   const isMatch = await bcrypt.compare(password, admin.password);
 
   if (!isMatch) {
-    return res.render("admin/auth/login", { error: "Invalid password" });
+    // return res.render("admin/auth/login", { error: "Invalid password" });
+    req.flash("error", "Invalid password");
+    return res.redirect("/api/v1/admin/login")
   }
 
   req.session.admin = {
@@ -39,7 +36,8 @@ exports.postLogin = async (req, res) => {
   res.redirect("/api/v1/admin/dashboard");
 };
 
-// Register
+
+// REGISTER
 exports.getRegister = (req, res) => {
   res.render("admin/auth/register");
 };
@@ -50,15 +48,14 @@ exports.postRegister = async (req, res) => {
   const exists = await Admin.findOne({ $or: [{ email }, { username }] });
 
   if (exists) {
-    return res.render("admin/auth/register", {
-      error: "Username already exists",
-    });
+    req.flash("error", "User already exist!");
+    return res.redirect("/api/v1/admin/register");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  console.log("otp : ", otp)
+  console.log("otp : ", otp);
 
   const admin = new Admin({
     username,
@@ -75,21 +72,29 @@ exports.postRegister = async (req, res) => {
   res.redirect(`/api/v1/admin/verify-otp?email=${email}`);
 };
 
-// OTP
+
+// GET OTP
 exports.getVerifyOtp = (req, res) => {
   res.render("admin/auth/verify-otp", { email: req.query.email });
 };
 
+
+// VERIFY OTP
 exports.postVerifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
   const admin = await Admin.findOne({ email });
 
+  console.log("Admin : ", admin);
+
   if (!admin || admin.otp !== otp || admin.otpExpiry < Date.now()) {
-    return res.render("admin/auth/verify-otp", {
-      error: "Invalid or expired OTP",
-      email,
-    });
+    // return res.render("admin/auth/verify-otp", {
+    //   error: "Invalid or expired OTP",
+    //   email,
+    // });
+
+    req.flash("error", "Invalid or expired OTP")
+    return res.redirect("/api/v1/admin/verify-otp")
   }
 
   admin.isVerified = true;
@@ -98,16 +103,9 @@ exports.postVerifyOtp = async (req, res) => {
 
   await admin.save();
 
+  req.flash("success", "User registered successfully!")
   res.redirect("/api/v1/admin/login");
 };
-
-
-
-
-
-
-
-
 
 
 // PASSWORD RESET

@@ -1,5 +1,6 @@
 // feeStructure.controller.js
 const FeeStructure = require("../models/feeStructure.model");
+const Student = require("../models/student.model");
 
 // GET all fee structures
 exports.getAllFeeStructures = async (req, res) => {
@@ -7,21 +8,23 @@ exports.getAllFeeStructures = async (req, res) => {
   res.render("admin/fee/index", { feeStructures });
 };
 
+
 // Show create form
 exports.getNewFeeStructureForm = (req, res) => {
   res.render("admin/fee/new");
 };
 
+
 // Create new fee structure
 exports.createFeeStructure = async (req, res) => {
   const { academicYear, course, breakdown, hostelFee, dueDate, finePerWeek } = req.body;
 
-  if (!academicYear || !course || !breakdown || !hostelFee || !dueDate) { // 🆕
+  if (!academicYear || !course || !breakdown || !hostelFee || !dueDate) {
     req.flash("error", "Please fill all required fields");
     return res.redirect("/api/v1/fees/new");
   }
 
-  // 🆕 check duplicate academic year
+  //check duplicate academic year
   const existing = await FeeStructure.findOne({ academicYear });
   if (existing) {
     req.flash("error", `Fee structure for ${academicYear} already exists`);
@@ -39,9 +42,10 @@ exports.createFeeStructure = async (req, res) => {
 
   await feeStructure.save();
 
-  req.flash("success", `Fee structure for ${academicYear} created successfully`); // updated
+  req.flash("success", `Fee structure for ${academicYear} created successfully`);
   res.redirect("/api/v1/fees");
 };
+
 
 // Edit form
 exports.getEditFeeStructureForm = async (req, res) => {
@@ -55,13 +59,12 @@ exports.getEditFeeStructureForm = async (req, res) => {
   res.render("admin/fee/edit", { feeStructure });
 };
 
+
 // Update fee structure
 exports.updateFeeStructure = async (req, res) => {
   const { id } = req.params;
-
   const fee = await FeeStructure.findById(id);
-
-  if (!fee) { // 🆕
+  if (!fee) {
     req.flash("error", "Fee structure not found");
     return res.redirect("/api/v1/fees");
   }
@@ -75,21 +78,20 @@ exports.updateFeeStructure = async (req, res) => {
 
   await fee.save();
 
-  req.flash("success", `Fee structure updated successfully`); // updated
+  req.flash("success", `Fee structure updated successfully`);
   res.redirect("/api/v1/fees");
 };
 
+
 // Delete fee structure — intentionally not exposed in routes (risky operation)
 exports.deleteFeeStructure = async (req, res) => {
-  const fee = await FeeStructure.findById(req.params.id); // 🆕 check before delete
-
+  const fee = await FeeStructure.findById(req.params.id);
   if (!fee) {
     req.flash("error", "Fee structure not found");
     return res.redirect("/api/v1/fees");
   }
 
-  // 🆕 check if any student is using this fee structure
-  const Student = require("../models/student.model");
+  // check if any student is using this fee structure
   const linkedStudents = await Student.countDocuments({ feeStructure: req.params.id });
 
   if (linkedStudents > 0) {
@@ -98,6 +100,7 @@ exports.deleteFeeStructure = async (req, res) => {
   }
 
   await FeeStructure.findByIdAndDelete(req.params.id);
-  req.flash("success", "Fee structure deleted");
+
+  req.flash("success", "Fee structure deleted successfully!");
   res.redirect("/api/v1/fees");
 };

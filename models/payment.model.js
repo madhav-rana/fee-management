@@ -23,7 +23,8 @@ const paymentSchema = new mongoose.Schema(
       required: true
     },
     receiptPdfUrl: {
-      type: String
+      type: String,
+      default: null //self
     },
     receiptEmailSent: {
       type: Boolean,

@@ -12,14 +12,15 @@ router.use(isAdmin);
 router.get("/", wrapAsync(feeController.getAllFeeStructures));
 
 // Show form to create new fee structure
-// ⚠️ getNewFeeStructureForm has no wrapAsync — correct since it's not async
+
+// getNewFeeStructureForm has no wrapAsync — correct since it's not async
 router.get("/new", feeController.getNewFeeStructureForm);
 
 // Create new fee structure
 router.post("/", wrapAsync(feeController.createFeeStructure));
 
 // View single fee structure
-router.get("/:id", wrapAsync(feeController.getFeeStructureById));
+// router.get("/:id", wrapAsync(feeController.getFeeStructureById));
 
 // Show edit form
 router.get("/:id/edit", wrapAsync(feeController.getEditFeeStructureForm));

@@ -86,11 +86,11 @@
           </button>
           
           <% if (isAuthenticated) { %>
-            <a href="/api/v1/admin/students" class="btn btn-secondary btn-lg ms-2 rounded-pill">
+            <a href="/api/v1/admin/students" class="btn btn-secondary btn-lg ms-2 rounded-pill px-4">
               <i class="bi bi-arrow-left me-2"></i>Cancel
             </a>
           <% } else { %>
-            <a href="/api/v1/students" class="btn btn-secondary btn-lg ms-2 rounded-pill">
+            <a href="/api/v1/students" class="btn btn-secondary btn-lg ms-2 rounded-pill px-4">
               <i class="bi bi-arrow-left me-2"></i>Cancel
             </a>
           <% } %>
@@ -126,14 +126,12 @@
     const mode = document.getElementById('paymentMode').value;
     const amount = amountInput.value;
 
-    // 🚩 Important: Razorpay sirf tabhi chalega jab mode 'upi' ho
-    if (mode === 'upi') {
+    if (mode === 'upi' || mode === 'card') {
       e.preventDefault(); 
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
 
       try {
-        // 🚩 FIXED PATH: Added /api/v1
         const response = await fetch('/api/v1/payments/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -173,7 +171,23 @@
                 submitBtn.innerHTML = '<i class="bi bi-shield-lock-fill me-2"></i>Submit Payment';
             }
           },
-          "prefill": { "name": "<%= student.name %>" },
+          "prefill": { 
+            "name": "<%= student.name %>",
+            "method": "upi" // 🚩 Isse UPI automatically prioritize hoga
+          },
+          "config": {
+            "display": {
+              "blocks": {
+                "upi": {
+                  "name": "Pay via UPI",
+                  "instruments": [
+                    { "method": "upi" } // Isse saari UPI apps aur ID options dikhenge
+                  ]
+                }
+              },
+              "sequence": ["block.upi"]
+            }
+          },
           "theme": { "color": "#198754" }
         };
 
