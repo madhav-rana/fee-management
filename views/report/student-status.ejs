@@ -73,7 +73,7 @@
             <th>Name</th>
             <th>Roll No</th>
             <th>Branch</th>
-            <th class="text-center">Status</th>
+            <!-- <th class="text-center">Status</th> -->
           </tr>
         </thead>
 
@@ -84,13 +84,13 @@
               <td class="fw-bold"><%= s.name %></td>
               <td><%= s.rollNo %></td>
               <td><%= s.branchName %> (<%= s.branchCode %>)</td>
-              <td class="text-center">
+              <!-- <td class="text-center">
                 <% if (s.status === "PAID") { %>
                   <span class="badge bg-success">PAID</span>
                 <% } else { %>
                   <span class="badge bg-danger">UNPAID</span>
                 <% } %>
-              </td>
+              </td> -->
             </tr>
           <% }) %>
         </tbody>

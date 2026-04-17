@@ -28,7 +28,7 @@
           <% report.forEach(r => { %>
             <tr>
               <td class="ps-4 fw-bold text-dark"><%= r.branchName %> (<%= r.branchCode %>)</td>
-              <td class="text-center"><span class="badge bg-light text-dark border"><%= r.totalStudents %></span></td>
+             <td class="text-center"><%= r.totalStudents %></td>
               <td>₹<%= r.expectedAmount.toLocaleString() %></td>
               <td class="text-success fw-bold">₹<%= r.totalCollected.toLocaleString() %></td>
               <td class="text-danger fw-bold">₹<%= r.pendingAmount.toLocaleString() %></td>

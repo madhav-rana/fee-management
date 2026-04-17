@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-=======
+
 // const nodemailer = require("nodemailer");
->>>>>>> f8cce1abd75fec5e5c9920a50307a71388eaeb0b
+
 
 // const transporter = nodemailer.createTransport({
 //   host: "smtp.gmail.com",
@@ -29,18 +28,13 @@
 
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> f8cce1abd75fec5e5c9920a50307a71388eaeb0b
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-<<<<<<< HEAD
 
-=======
->>>>>>> f8cce1abd75fec5e5c9920a50307a71388eaeb0b
+
   port: 465,
   secure: true,
   auth: {
@@ -53,7 +47,7 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 15000,
-<<<<<<< HEAD
+
 
   port: 587,
   secure: false,
@@ -62,8 +56,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS  //this must be App Password not your Gmail password
   }
 
-=======
->>>>>>> f8cce1abd75fec5e5c9920a50307a71388eaeb0b
+
 });
 
 transporter.verify((err, success) => {
@@ -74,14 +67,12 @@ transporter.verify((err, success) => {
   }
 });
 
-<<<<<<< HEAD
-
-module.exports = transporter;
 
 
 module.exports = transporter;
 
 
-=======
 module.exports = transporter;
->>>>>>> f8cce1abd75fec5e5c9920a50307a71388eaeb0b
+
+
+module.exports = transporter;
