@@ -30,6 +30,17 @@
                 </select>
             </div>
 
+            <div class="col-md-3">
+                <label class="form-label fw-bold small text-uppercase">Year</label>
+                <select name="year" class="form-select">
+                    <option value="">All Years</option>
+                    <option value="1" <%= year === "1" ? "selected" : "" %>>Year 1</option>
+                    <option value="2" <%= year === "2" ? "selected" : "" %>>Year 2</option>
+                    <option value="3" <%= year === "3" ? "selected" : "" %>>Year 3</option>
+                    <option value="4" <%= year === "4" ? "selected" : "" %>>Year 4</option>
+                </select>
+            </div>
+
             <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary w-100 rounded-pill fw-bold">
                     <i class="bi bi-file-earmark-text me-1"></i> Generate Report

@@ -3,50 +3,32 @@
 <div class="container my-5">
 
   <!-- HEADER -->
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h3 class="fw-bold m-0">
-        <i class="bi bi-bar-chart-line-fill text-primary me-2"></i>Fee Status Report
+        <i class="bi bi-house-fill text-primary me-2"></i>Hosteler / Day Scholar Report
       </h3>
-      <p class="text-muted small m-0">View paid and unpaid students</p>
+      <p class="text-muted small m-0">View students by accommodation type</p>
     </div>
-    <% if (report.length > 0) { %>
-      <a href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>&filter=<%= filter %>&export=pdf"
-         class="btn btn-danger rounded-pill">
-        <i class="bi bi-file-earmark-pdf"></i> Export PDF
-      </a>
-    <% } %>
   </div>
 
   <!-- FILTERS -->
   <div class="bg-light p-3 rounded-3 mb-4 shadow-sm">
-    <form method="GET" action="/api/v1/reports/student-status" class="row g-3">
+    <form method="GET" action="/api/v1/reports/hostel" class="row g-3">
 
-      <div class="col-md-3">
-        <label class="form-label small fw-bold">ACADEMIC YEAR</label>
-        <select name="academicYear" class="form-select">
-          <option value="">All</option>
-          <% allFeeStructures.forEach(f => { %>
-            <option value="<%= f.academicYear %>" <%= academicYear === f.academicYear ? "selected" : "" %>>
-              <%= f.academicYear %>
-            </option>
-          <% }) %>
-        </select>
-      </div>
-
-      <div class="col-md-3">
+      <div class="col-md-4">
         <label class="form-label small fw-bold">BRANCH</label>
         <select name="branch" class="form-select">
           <option value="">All Branches</option>
           <% branches.forEach(b => { %>
             <option value="<%= b.code %>" <%= branch === b.code ? "selected" : "" %>>
-              <%= b.name %>
+              <%= b.name %> (<%= b.code %>)
             </option>
           <% }) %>
         </select>
       </div>
 
-      <div class="col-md-2">
+      <div class="col-md-3">
         <label class="form-label small fw-bold">YEAR</label>
         <select name="year" class="form-select">
           <option value="">All Years</option>
@@ -57,7 +39,7 @@
         </select>
       </div>
 
-      <div class="col-md-4 d-flex align-items-end">
+      <div class="col-md-5 d-flex align-items-end">
         <button class="btn btn-primary w-100 rounded-pill fw-bold">
           <i class="bi bi-search me-1"></i> Generate Report
         </button>
@@ -66,21 +48,36 @@
     </form>
   </div>
 
-  <!-- PAID / UNPAID TOGGLE -->
-  <% if (report.length > 0 || filter) { %>
+  <!-- TYPE TOGGLE -->
+  <% if (report.length > 0 || type) { %>
     <div class="d-flex gap-2 mb-4">
-      <a href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>"
-         class="btn <%= !filter ? 'btn-primary' : 'btn-outline-primary' %> rounded-pill">
+      <a href="?branch=<%= branch %>&year=<%= year %>"
+         class="btn <%= !type ? 'btn-primary' : 'btn-outline-primary' %> rounded-pill">
         All
       </a>
-      <a href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>&filter=paid"
-         class="btn <%= filter === 'paid' ? 'btn-success' : 'btn-outline-success' %> rounded-pill">
-        Paid
+      <a href="?branch=<%= branch %>&year=<%= year %>&type=hosteler"
+         class="btn <%= type === 'hosteler' ? 'btn-success' : 'btn-outline-success' %> rounded-pill">
+        🏠 Hostelers
       </a>
-      <a href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>&filter=unpaid"
-         class="btn <%= filter === 'unpaid' ? 'btn-danger' : 'btn-outline-danger' %> rounded-pill">
-        Unpaid
+      <a href="?branch=<%= branch %>&year=<%= year %>&type=dayscholar"
+         class="btn <%= type === 'dayscholar' ? 'btn-warning' : 'btn-outline-warning' %> rounded-pill">
+        🚌 Day Scholars
       </a>
+    </div>
+  <% } %>
+
+  <!-- SUMMARY BADGES -->
+  <% if (report.length > 0) { %>
+    <div class="d-flex gap-3 mb-3">
+      <span class="badge bg-success fs-6 px-3 py-2 rounded-pill">
+        🏠 Hostelers: <%= report.filter(s => s.isHosteller).length %>
+      </span>
+      <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill">
+        🚌 Day Scholars: <%= report.filter(s => !s.isHosteller).length %>
+      </span>
+      <span class="badge bg-secondary fs-6 px-3 py-2 rounded-pill">
+        Total: <%= report.length %>
+      </span>
     </div>
   <% } %>
 
@@ -95,29 +92,31 @@
       <table class="table align-middle mb-0">
         <thead class="table-dark">
           <tr>
-            <th>#</th>
+            <th class="ps-3">#</th>
             <th>Name</th>
             <th>Roll No</th>
             <th>Branch</th>
             <th class="text-center">Year</th>
-            <th class="text-center">Status</th>
+            <th>Contact</th>
+            <th class="text-center">Type</th>
           </tr>
         </thead>
         <tbody>
           <% report.forEach((s, i) => { %>
             <tr>
-              <td><%= i + 1 %></td>
+              <td class="ps-3 text-muted"><%= i + 1 %></td>
               <td class="fw-bold"><%= s.name %></td>
-              <td><%= s.rollNo %></td>
+              <td class="text-secondary"><%= s.rollNo %></td>
               <td><%= s.branchName %> (<%= s.branchCode %>)</td>
               <td class="text-center">
                 <span class="badge bg-secondary">Year <%= s.year %></span>
               </td>
+              <td><%= s.contactNumber %></td>
               <td class="text-center">
-                <% if (s.status === "PAID") { %>
-                  <span class="badge bg-success">PAID</span>
+                <% if (s.isHosteller) { %>
+                  <span class="badge bg-success">🏠 Hosteler</span>
                 <% } else { %>
-                  <span class="badge bg-danger">UNPAID</span>
+                  <span class="badge bg-warning text-dark">🚌 Day Scholar</span>
                 <% } %>
               </td>
             </tr>
