@@ -22,13 +22,12 @@
 
 
 
-const transporter = require("../config/mailer"); // ✅ top level
+const transporter = require("../config/mailer");
 
 async function sendReceiptEmail(studentEmail, pdfBuffer, receiptNumber) {
   try {
     await transporter.sendMail({
-      // from: process.env.EMAIL_FROM, // ✅ from env
-      from: "madhavsinghrana.college@gemail.com", // ✅ from env
+      from: process.env.EMAIL_FROM,
       // to: studentEmail,
       to: "ranamadhavsingh@hotmail.com",
       subject: "Fee Payment Receipt",
@@ -42,7 +41,7 @@ async function sendReceiptEmail(studentEmail, pdfBuffer, receiptNumber) {
     });
   } catch(err) {
     console.error(`Email failed for ${studentEmail}:`, err.message);
-    throw err; // ✅ re-throw so controller knows
+    throw err; // re-throw so controller knows
   }
 }
 
