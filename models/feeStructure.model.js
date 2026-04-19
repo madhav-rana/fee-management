@@ -61,7 +61,7 @@ const feeStructureSchema = new mongoose.Schema({
   }
 });
 //  AUTO-CALCULATE totalAmount
-feeStructureSchema.pre("save", function (next) {
+feeStructureSchema.pre("save", async function () {
   this.totalAmount =
     this.breakdown.tuition +
     this.breakdown.cautionMoney +

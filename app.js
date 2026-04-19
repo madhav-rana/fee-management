@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
@@ -24,12 +23,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
-const MONGO_URL = process.env.MONGO_URL;
-main().catch(err => console.log("MongoDB Connection Error:", err));
-async function main() {
-  await mongoose.connect(MONGO_URL);
-  console.log("✅ Database Connected");
-}
+// const MONGO_URL = process.env.MONGO_URL;
+// main().catch(err => console.log("MongoDB Connection Error:", err));
+// async function main() {
+//   await mongoose.connect(MONGO_URL);
+//   console.log("✅ Database Connected");
+// }
+require("./config/database")
 
 // View Engine Setup 
 app.engine("ejs", ejsMate);
