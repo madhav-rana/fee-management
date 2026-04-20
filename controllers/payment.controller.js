@@ -1,30 +1,26 @@
 // payment.controller.js
-const Razorpay = require("razorpay");
-
-// Models
 const Student = require("../models/student.model");
 const Payment = require("../models/payment.model");
+const receiptQueue = require("../config/queue");
 
-// Utils
+// Utility function from - Utils
 const generateReceiptPDF = require("../utils/generateReceiptPDF");
-const uploadToCloudinary = require("../utils/uploadToCloudinary");
-const sendReceiptEmail = require("../utils/sendReceiptEmail");
 const calculateFine = require("../utils/getLateFine");
-const calculateExpectedTotal = require("../utils/calculateExpectedTotal"); // 🆕
+const calculateExpectedTotal = require("../utils/calculateExpectedTotal");
 
-// Razorpay instance — ready for future implementation
+const Razorpay = require("razorpay");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// PAYMENT PAGE
-// ================= 1. RAZORPAY ORDER CREATION =================
+
+// RAZORPAY ORDER CREATION
 exports.createOrder = async (req, res) => {
   try {
     const { amount, studentId } = req.body;
 
-    // Debugging: Check if keys are loaded (Terminal check)
+    // Check if keys are loaded (Terminal check)
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
         console.error("❌ ERROR: Razorpay Keys are missing in .env file");
         return res.status(500).json({ error: "Server Configuration Error: Keys missing" });
@@ -35,7 +31,7 @@ exports.createOrder = async (req, res) => {
     }
 
     const options = {
-      amount: Math.round(Number(amount) * 100), // Paise mein convert
+      amount: Math.round(Number(amount) * 100), // conver in money
       currency: "INR",
       receipt: `rcpt_${studentId.substring(0, 5)}_${Date.now()}`,
     };
@@ -57,7 +53,7 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// ================= 2. PAYMENT PAGE =================
+// SHOW PAYMENT PAGE
 exports.renderPaymentPage = async (req, res) => {
   const { studentId } = req.query;
 
@@ -70,17 +66,17 @@ exports.renderPaymentPage = async (req, res) => {
     .populate("branch")
     .populate("feeStructure");
 
-  if (!student) { // 🆕 flash instead of res.status().send()
+  if (!student) {
     req.flash("error", "Student not found");
     return res.redirect("/api/v1/students");
   }
 
-  if (!student.feeStructure) { // 🆕 flash instead of res.status().send()
+  if (!student.feeStructure) {
     req.flash("error", "No fee structure assigned to this student");
     return res.redirect("/api/v1/students");
   }
 
-  const expectedTotal = calculateExpectedTotal(student); // 🆕 utility used
+  const expectedTotal = calculateExpectedTotal(student); // utility used
   const payments = await Payment.find({ student: student._id });
   const totalPaid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
   const fine = calculateFine(student.feeStructure.dueDate, student.feeStructure.finePerWeek);
@@ -101,7 +97,7 @@ exports.savePayment = async (req, res) => {
   const { studentId, amountPaid, paymentMode, razorpay_payment_id } = req.body;
 
   if (!studentId || !amountPaid || !paymentMode) {
-    req.flash("error", "Missing required fields"); // 🆕 flash instead of res.status().send()
+    req.flash("error", "Missing required fields");
     return res.redirect("/api/v1/payments/new");
     // req.flash("error", "Missing required fields");
     // return res.redirect(`/api/v1/payments/new?studentId=${studentId}`);
@@ -112,11 +108,11 @@ exports.savePayment = async (req, res) => {
     .populate("branch");
 
   if (!student || !student.feeStructure) {
-    req.flash("error", "Student or fee data not found"); // 🆕 flash instead of res.status().send()
+    req.flash("error", "Student or fee data not found");
     return res.redirect("/api/v1/students");
   }
 
-  // 🆕 prevent overpayment
+  // To prevent overpayment
   const expectedTotal = calculateExpectedTotal(student);
   const fine = calculateFine(student.feeStructure.dueDate, student.feeStructure.finePerWeek);
   const payments = await Payment.find({ student: student._id });
@@ -128,7 +124,7 @@ exports.savePayment = async (req, res) => {
     return res.redirect(`/api/v1/payments/new?studentId=${studentId}`);
   }
 
-  // 1. Save payment to DB
+  // Save payment to DB
   const payment = await Payment.create({
     student: student._id,
     amountPaid: Number(amountPaid),
@@ -138,44 +134,56 @@ exports.savePayment = async (req, res) => {
     automationStatus: "pending"
   });
 
-  // 2. Redirect immediately
+  // Redirect immediately
   req.flash("success", "💰 Payment recorded! Receipt will be emailed shortly.");
   res.redirect(`/api/v1/payments/receipt/${payment._id}`);
 
-  // 3. Background automation
-  setImmediate(async () => {
-    try {
-      console.log(`⏳ Starting automation for ${payment.receiptNumber}`);
+  // Background automation
+  // setImmediate(async () => {
+  //   try {
+  //     console.log(`⏳ Starting automation for ${payment.receiptNumber}`);
 
-      const pdfBuffer = await generateReceiptPDF({
-        ...payment.toObject(),
-        student,
-        fineApplied: fine,
-      });
-      console.log(`📄 PDF generated for ${payment.receiptNumber}`);
+  //     const pdfBuffer = await generateReceiptPDF({
+  //       ...payment.toObject(),
+  //       student,
+  //       fineApplied: fine,
+  //     });
+  //     console.log(`📄 PDF generated for ${payment.receiptNumber}`);
 
-      const pdfUrl = await uploadToCloudinary(pdfBuffer, payment.receiptNumber);
-      payment.receiptPdfUrl = pdfUrl;
-      console.log(`☁️ Uploaded to Cloudinary for ${payment.receiptNumber}`);
+  //     const pdfUrl = await uploadToCloudinary(pdfBuffer, payment.receiptNumber);
+  //     payment.receiptPdfUrl = pdfUrl;
+  //     console.log(`☁️ Uploaded to Cloudinary for ${payment.receiptNumber}`);
 
-      if (student.email) {
-        await sendReceiptEmail(student.email, pdfBuffer, payment.receiptNumber);
-        payment.receiptEmailSent = true;
-        console.log(`📧 Email sent for ${payment.receiptNumber}`);
-      }
+  //     if (student.email) {
+  //       await sendReceiptEmail(student.email, pdfBuffer, payment.receiptNumber);
+  //       payment.receiptEmailSent = true;
+  //       console.log(`📧 Email sent for ${payment.receiptNumber}`);
+  //     }
 
-      payment.automationStatus = "success";
-      await payment.save();
-      console.log(`✅ Automation complete for ${payment.receiptNumber}`);
+  //     payment.automationStatus = "success";
+  //     await payment.save();
+  //     console.log(`✅ Automation complete for ${payment.receiptNumber}`);
 
-    } catch (err) {
-      payment.automationStatus = "failed";
-      payment.automationError = err.message;
-      await payment.save();
-      console.error(`❌ Automation failed for ${payment.receiptNumber}:`, err.message);
-    }
+  //   } catch (err) {
+  //     payment.automationStatus = "failed";
+  //     payment.automationError = err.message;
+  //     await payment.save();
+  //     console.error(`❌ Automation failed for ${payment.receiptNumber}:`, err.message);
+  //   }
+  // });
+
+  await receiptQueue.add({
+    paymentId: payment._id.toString(),
+    studentId: student._id.toString(),
+    fine,
+  }, {
+    attempts: 3,    // retry 3 times on failure
+    backoff: 5000,  // wait 5 seconds between retries
   });
+
+  console.log(`📥 Receipt job queued for ${payment.receiptNumber}`);
 };
+
 
 // RECEIPT
 exports.getReceipt = async (req, res) => {
@@ -185,16 +193,16 @@ exports.getReceipt = async (req, res) => {
   });
 
   if (!payment) {
-    req.flash("error", "Receipt not found"); // 🆕 flash instead of res.status().send()
+    req.flash("error", "Receipt not found");
     return res.redirect("/api/v1/students");
   }
 
-  if (!payment.student || !payment.student.feeStructure) { // 🆕
+  if (!payment.student || !payment.student.feeStructure) {
     req.flash("error", "Receipt data incomplete");
     return res.redirect("/api/v1/students");
   }
 
-  const expectedTotal = calculateExpectedTotal(payment.student); // 🆕 utility used
+  const expectedTotal = calculateExpectedTotal(payment.student); // utility used
 
   res.render("receipt", { payment, expectedTotal });
 };
@@ -207,7 +215,7 @@ exports.getReceipt = async (req, res) => {
 //   });
 
 //   if (!payment || !payment.student || !payment.student.feeStructure) {
-//     req.flash("error", "Missing data for PDF generation"); // 🆕 flash instead of res.status().send()
+//     req.flash("error", "Missing data for PDF generation");
 //     return res.redirect("/api/v1/students");
 //   }
 
@@ -236,6 +244,7 @@ exports.getReceipt = async (req, res) => {
 //   res.redirect(pdfUrl);
 // };
 
+
 exports.getReceiptPDF = async (req, res) => {
   const payment = await Payment.findById(req.params.id).populate({
     path: "student",
@@ -258,7 +267,7 @@ exports.getReceiptPDF = async (req, res) => {
     fineApplied: fine,
   });
 
-  // ✅ Stream directly to browser — no Cloudinary needed
+  // Stream directly to browser — no Cloudinary needed
   res.set({
     "Content-Type": "application/pdf",
     "Content-Disposition": `attachment; filename="${payment.receiptNumber}.pdf"`,
