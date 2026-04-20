@@ -11,5 +11,6 @@ router.get("/", reportController.getReportHome); // no wrapAsync — not async
 router.get("/branch", wrapAsync(reportController.getBranchReport)); // 🆕
 router.get("/duration", wrapAsync(reportController.getDurationReport)); // 🆕
 router.get("/student-status", wrapAsync(reportController.getStudentStatusReport)); // 🆕
+router.get("/hostel", wrapAsync(reportController.getHostelReport));
 
 module.exports = router;
