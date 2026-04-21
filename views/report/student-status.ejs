@@ -106,7 +106,8 @@
         <tbody>
           <% report.forEach((s, i) => { %>
             <tr>
-              <td><%= i + 1 %></td>
+              <!-- <td><%= i + 1 %></td> -->
+              <td><%= (currentPage - 1) * 20 + i + 1 %></td>
               <td class="fw-bold"><%= s.name %></td>
               <td><%= s.rollNo %></td>
               <td><%= s.branchName %> (<%= s.branchCode %>)</td>
@@ -124,6 +125,45 @@
           <% }) %>
         </tbody>
       </table>
+      <!-- PAGINATION -->
+      <% if (totalPages > 1) { %>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+
+          <p class="text-muted small m-0">
+            Showing <%= (currentPage - 1) * 20 + 1 %> - <%= Math.min(currentPage * 20, totalCount) %> of <%= totalCount %> students
+          </p>
+
+          <nav>
+            <ul class="pagination mb-0">
+
+              <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                <a class="page-link rounded-start-pill"
+                  href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>&filter=<%= filter %>&page=<%= currentPage - 1 %>">
+                  &laquo;
+                </a>
+              </li>
+
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link"
+                    href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>&filter=<%= filter %>&page=<%= i %>">
+                    <%= i %>
+                  </a>
+                </li>
+              <% } %>
+
+              <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                <a class="page-link rounded-end-pill"
+                  href="?branch=<%= branch %>&year=<%= year %>&academicYear=<%= academicYear %>&filter=<%= filter %>&page=<%= currentPage + 1 %>">
+                  &raquo;
+                </a>
+              </li>
+
+            </ul>
+          </nav>
+
+        </div>
+      <% } %>
     </div>
   <% } %>
 
