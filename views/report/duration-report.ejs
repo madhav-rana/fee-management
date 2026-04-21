@@ -1,103 +1,149 @@
 <% layout("layouts/boilerplate") %>
 
-<div class="container my-5">
-    <div class="mb-4">
-        <h3 class="fw-bold"><i class="bi bi-calendar-range me-2 text-primary"></i>Duration-wise Fee Collection</h3>
-        <p class="text-muted">Select a start and/or end date to view fee collection within a duration.</p>
-    </div>
-
-    <div class="card shadow-sm border-0 rounded-4 p-4 mb-5 bg-white">
-        <form method="GET" action="/api/v1/reports/duration" class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label fw-bold small text-uppercase">Start Date</label>
-                <input type="date" name="from" class="form-control" value="<%= from || '' %>">
-            </div>
-
-            <div class="col-md-3">
-                <label class="form-label fw-bold small text-uppercase">End Date</label>
-                <input type="date" name="to" class="form-control" value="<%= to || '' %>">
-            </div>
-
-            <div class="col-md-3">
-                <label class="form-label fw-bold small text-uppercase">Branch</label>
-                <select name="branch" class="form-select">
-                    <option value="">All Branches</option>
-                    <% branches.forEach(b => { %>
-                        <option value="<%= b.code %>" <%= branch === b.code ? "selected" : "" %>>
-                            <%= b.name %> (<%= b.code %>)
-                        </option>
-                    <% }) %>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label class="form-label fw-bold small text-uppercase">Year</label>
-                <select name="year" class="form-select">
-                    <option value="">All Years</option>
-                    <option value="1" <%= year === "1" ? "selected" : "" %>>Year 1</option>
-                    <option value="2" <%= year === "2" ? "selected" : "" %>>Year 2</option>
-                    <option value="3" <%= year === "3" ? "selected" : "" %>>Year 3</option>
-                    <option value="4" <%= year === "4" ? "selected" : "" %>>Year 4</option>
-                </select>
-            </div>
-
-            <div class="col-md-3 d-flex align-items-end">
-                <button class="btn btn-primary w-100 rounded-pill fw-bold">
-                    <i class="bi bi-file-earmark-text me-1"></i> Generate Report
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <% if (report && report.length > 0) { %>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold m-0">Filtered Results</h5>
-            <div class="d-flex gap-2">
-                <span class="badge bg-success fs-6 px-3 py-2 rounded-pill shadow-sm">
-                    Total Collected: ₹<%= grandTotal.toLocaleString() %>
-                </span>
-                <a href="/api/v1/reports/duration?from=<%= from %>&to=<%= to %>&branch=<%= branch %>&export=pdf" 
-                   class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm">
-                    <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
-                </a>
-            </div>
+    <div class="container my-5">
+        <div class="mb-4">
+            <h3 class="fw-bold"><i class="bi bi-calendar-range me-2 text-primary"></i>Duration-wise Fee Collection</h3>
+            <p class="text-muted">Select a start and/or end date to view fee collection within a duration.</p>
         </div>
 
-        <div class="table-responsive shadow-sm rounded-3">
-            <table class="table table-hover align-middle bg-white mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th class="ps-3">#</th>
-                        <th>Student Name</th>
-                        <th>Roll No</th>
-                        <th>Branch</th>
-                        <th class="text-center">No. of Payments</th>
-                        <th class="text-end pe-4">Total Paid (₹)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% report.forEach((r, index) => { %>
+        <div class="card shadow-sm border-0 rounded-4 p-4 mb-5 bg-white">
+            <form method="GET" action="/api/v1/reports/duration" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase">Start Date</label>
+                    <input type="date" name="from" class="form-control" value="<%= from || '' %>">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase">End Date</label>
+                    <input type="date" name="to" class="form-control" value="<%= to || '' %>">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase">Branch</label>
+                    <select name="branch" class="form-select">
+                        <option value="">All Branches</option>
+                        <% branches.forEach(b=> { %>
+                            <option value="<%= b.code %>" <%=branch===b.code ? "selected" : "" %>>
+                                <%= b.name %> (<%= b.code %>)
+                            </option>
+                            <% }) %>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-uppercase">Year</label>
+                    <select name="year" class="form-select">
+                        <option value="">All Years</option>
+                        <option value="1" <%=year==="1" ? "selected" : "" %>>Year 1</option>
+                        <option value="2" <%=year==="2" ? "selected" : "" %>>Year 2</option>
+                        <option value="3" <%=year==="3" ? "selected" : "" %>>Year 3</option>
+                        <option value="4" <%=year==="4" ? "selected" : "" %>>Year 4</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100 rounded-pill fw-bold">
+                        <i class="bi bi-file-earmark-text me-1"></i> Generate Report
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <% if (report && report.length> 0) { %>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0">Filtered Results</h5>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-success fs-6 px-3 py-2 rounded-pill shadow-sm">
+                        Total Collected: ₹<%= grandTotal.toLocaleString() %>
+                    </span>
+                    <a href="/api/v1/reports/duration?from=<%= from %>&to=<%= to %>&branch=<%= branch %>&year=<%= year %>&export=pdf"
+                        class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm">
+                        <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-responsive shadow-sm rounded-3">
+                <table class="table table-hover align-middle bg-white mb-0">
+                    <thead class="table-dark">
                         <tr>
-                            <td class="ps-3 text-muted"><%= index + 1 %></td>
-                            <td class="fw-bold"><%= r.studentName %></td>
-                            <td class="text-secondary"><%= r.rollNo %></td>
-                        <td>
-  <span class="text-dark">
-    <%= r.branchName %>
-  </span>
-</td>
-                            <td class="text-center"><%= r.paymentsCount %></td>
-                            <td class="text-end pe-4 fw-bold text-success">₹<%= r.totalPaid.toLocaleString() %></td>
+                            <th class="ps-3">#</th>
+                            <th>Student Name</th>
+                            <th>Roll No</th>
+                            <th>Branch</th>
+                            <th class="text-center">No. of Payments</th>
+                            <th class="text-end pe-4">Total Paid (₹)</th>
                         </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        <% report.forEach((r, index)=> { %>
+                            <tr>
+                                <td class="ps-3 text-muted"><%= (currentPage - 1) * 20 + index + 1 %></td>
+                                <td class="fw-bold">
+                                    <%= r.studentName %>
+                                </td>
+                                <td class="text-secondary">
+                                    <%= r.rollNo %>
+                                </td>
+                                <td>
+                                    <span class="text-dark">
+                                        <%= r.branchName %>
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <%= r.paymentsCount %>
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-success">₹<%= r.totalPaid.toLocaleString() %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+                <!-- PAGINATION -->
+                <% if (totalPages > 1) { %>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
 
-    <% } else { %>
-        <div class="alert alert-info border-0 shadow-sm rounded-4 text-center py-4">
-            <i class="bi bi-info-circle fs-2 d-block mb-2"></i>
-            No data to display. Please select a date range and generate the report.
-        </div>
-    <% } %>
-</div>
+                        <p class="text-muted small m-0">
+                        Showing <%= (currentPage - 1) * 20 + 1 %> - <%= Math.min(currentPage * 20, totalCount) %> of <%= totalCount %> students
+                        </p>
+
+                        <nav>
+                        <ul class="pagination mb-0">
+
+                            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link rounded-start-pill"
+                                href="?from=<%= from %>&to=<%= to %>&branch=<%= branch %>&year=<%= year %>&page=<%= currentPage - 1 %>">
+                                &laquo;
+                            </a>
+                            </li>
+
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link"
+                                href="?from=<%= from %>&to=<%= to %>&branch=<%= branch %>&year=<%= year %>&page=<%= i %>">
+                                <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link rounded-end-pill"
+                               href="?from=<%= from %>&to=<%= to %>&branch=<%= branch %>&year=<%= year %>&page=<%= currentPage + 1 %>">
+                                &raquo;
+                            </a>
+                            </li>
+
+                        </ul>
+                        </nav>
+
+                    </div>
+                <% } %>
+            </div>
+
+            <% } else { %>
+                <div class="alert alert-info border-0 shadow-sm rounded-4 text-center py-4">
+                    <i class="bi bi-info-circle fs-2 d-block mb-2"></i>
+                    No data to display. Please select a date range and generate the report.
+                </div>
+                <% } %>
+    </div>

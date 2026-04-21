@@ -10,6 +10,12 @@
       </h3>
       <p class="text-muted small m-0">View students by accommodation type</p>
     </div>
+    <% if (report.length > 0) { %>
+      <a href="?branch=<%= branch %>&year=<%= year %>&type=<%= type %>&export=pdf"
+        class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm">
+        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+      </a>
+    <% } %>
   </div>
 
   <!-- FILTERS -->
@@ -67,7 +73,7 @@
   <% } %>
 
   <!-- SUMMARY BADGES -->
-  <% if (report.length > 0) { %>
+  <!-- <% if (report.length > 0) { %>
     <div class="d-flex gap-3 mb-3">
       <span class="badge bg-success fs-6 px-3 py-2 rounded-pill">
         🏠 Hostelers: <%= report.filter(s => s.isHosteller).length %>
@@ -79,7 +85,7 @@
         Total: <%= report.length %>
       </span>
     </div>
-  <% } %>
+  <% } %> -->
 
   <!-- TABLE -->
   <% if (report.length === 0) { %>
@@ -104,7 +110,8 @@
         <tbody>
           <% report.forEach((s, i) => { %>
             <tr>
-              <td class="ps-3 text-muted"><%= i + 1 %></td>
+              <!-- <td class="ps-3 text-muted"><%= i + 1 %></td> -->
+              <td class="ps-3 text-muted"><%= (currentPage - 1) * 20 + i + 1 %></td>
               <td class="fw-bold"><%= s.name %></td>
               <td class="text-secondary"><%= s.rollNo %></td>
               <td><%= s.branchName %> (<%= s.branchCode %>)</td>
@@ -123,6 +130,48 @@
           <% }) %>
         </tbody>
       </table>
+      <!-- PAGINATION -->
+      <% if (totalPages > 1) { %>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+
+          <p class="text-muted small m-0">
+            Showing <%= (currentPage - 1) * 20 + 1 %> - <%= Math.min(currentPage * 20, totalCount) %> of <%= totalCount %> students
+          </p>
+
+          <nav>
+            <ul class="pagination mb-0">
+
+              <!-- Previous -->
+              <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                <a class="page-link rounded-start-pill"
+                  href="?branch=<%= branch %>&year=<%= year %>&type=<%= type %>&page=<%= currentPage - 1 %>">
+                  &laquo;
+                </a>
+              </li>
+
+              <!-- Page Numbers -->
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link"
+                    href="?branch=<%= branch %>&year=<%= year %>&type=<%= type %>&page=<%= i %>">
+                    <%= i %>
+                  </a>
+                </li>
+              <% } %>
+
+              <!-- Next -->
+              <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                <a class="page-link rounded-end-pill"
+                  href="?branch=<%= branch %>&year=<%= year %>&type=<%= type %>&page=<%= currentPage + 1 %>">
+                  &raquo;
+                </a>
+              </li>
+
+            </ul>
+          </nav>
+
+        </div>
+      <% } %>
     </div>
   <% } %>
 
