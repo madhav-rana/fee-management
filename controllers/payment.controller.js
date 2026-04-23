@@ -9,6 +9,7 @@ const calculateFine = require("../utils/getLateFine");
 const calculateExpectedTotal = require("../utils/calculateExpectedTotal");
 
 const Razorpay = require("razorpay");
+const sendReceiptEmail = require("../utils/sendReceiptEmail");
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -17,7 +18,7 @@ const razorpay = new Razorpay({
 
 // RAZORPAY ORDER CREATION
 exports.createOrder = async (req, res) => {
-  try {
+  try {sendReceiptEmail
     const { amount, studentId } = req.body;
 
     // Check if keys are loaded (Terminal check)

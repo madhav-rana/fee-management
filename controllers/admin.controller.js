@@ -1,4 +1,3 @@
-// admin.controller.js
 const Student = require("../models/student.model");
 const Payment = require("../models/payment.model");
 const FeeStructure = require("../models/feeStructure.model");
@@ -283,13 +282,7 @@ exports.bulkUploadStudents = async (req, res) => {
         } else {
             req.flash("success", `${insertedCount} students added successfully`);
         }
-
-        // return res.render("admin/student/addStudent", {
-        //   failedStudents,
-        //   branches,
-        //   feeStructures,
-        // //   updated: removed inline success/error — using flash now
-        // });
+        
         return res.render("admin/student/new", { failedStudents, branches, feeStructures });
 
       } catch (err) {

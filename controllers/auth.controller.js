@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const Admin = require("../models/admin.model");
+const sendOtpEmail = require("../utils/sendOtpEmail");
 
 // SHOW LOGIN PAGE
 exports.getLogin = (req, res) => {
@@ -68,7 +69,11 @@ exports.postRegister = async (req, res) => {
 
   await admin.save();
 
-  req.flash("success", `OTP: ${otp}`);
+  // req.flash("success", `OTP: ${otp}`);
+  if (admin.email) {
+    await sendOtpEmail(admin.email, admin.otp);
+    console.log(`📧 OTP sent on ${admin.email}`);
+  }
   res.redirect(`/api/v1/admin/verify-otp?email=${email}`);
 };
 
@@ -132,7 +137,11 @@ exports.postForgetPassword = async (req, res) => {
 
   await admin.save();
 
-  req.flash("success", `OTP: ${otp}`);
+  // req.flash("success", `OTP: ${otp}`);
+  if (admin.email) {
+    await sendOtpEmail(admin.email, admin.otp);
+    console.log(`📧 OTP sent on ${admin.email}`);
+  }
   res.redirect(`/api/v1/admin/reset-password-verify?email=${admin.email}`);
 };
 
