@@ -1,14 +1,17 @@
 const mongoose = require("mongoose");
-const branchSchema = new mongoose.Schema({
-  code: {
-    type: String,
-    enum: ["cse", "me", "ee", "civil", "ece", "ip", "ic"],
-    required: true,
-    unique: true
+const branchSchema = new mongoose.Schema(
+  {
+    code: {
+      type: String,
+      enum: ["cse", "me", "ee", "civil", "ece", "ip", "ic"],
+      required: true,
+      unique: true
+    },
+    name: {
+      type: String,
+      required: true
+    }
   },
-  name: {
-    type: String,
-    required: true
-  }
-});
+  { timestamps: true }
+);
 module.exports = mongoose.model("Branch", branchSchema);
