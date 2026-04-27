@@ -1,7 +1,4 @@
 .env
 node_modules
-payment.controller.txt
-report.controller.txt
-
-rough.txt
+init/
 

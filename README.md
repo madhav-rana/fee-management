@@ -35,7 +35,7 @@ A full-stack web application for managing college fee collection, payment proces
 | Payment Gateway | Razorpay |
 | Cloud Storage | Cloudinary |
 | Email | Nodemailer + Gmail SMTP |
-| PDF Generation | Puppeteer (reports), PDFKit (receipts) |
+| PDF Generation | html-pdf-node (reports), PDFKit (receipts) |
 | Authentication | Express-Session + bcrypt |
 | File Upload | Multer |
 | CSV Processing | csv-parser |
