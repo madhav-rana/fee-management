@@ -47,12 +47,12 @@ A full-stack web application for managing college fee collection, payment proces
 
 ```
 fee-management/
-├── app.js                        # Entry point
-├── config/
-│   ├── cloudinary.js             # Cloudinary setup
-│   ├── database.js               # MongoDB connection
-│   ├── mailer.js                 # Nodemailer SMTP
-│   └── queue.js                  # Bull queue config
+├── config/    # DB, mail, cloud setup
+│   ├── cloudinary.js
+│   ├── database.js
+│   ├── mailer.js
+│   └── queue.js
+│
 ├── controllers/
 │   ├── admin.controller.js
 │   ├── auth.controller.js
@@ -60,20 +60,30 @@ fee-management/
 │   ├── payment.controller.js
 │   ├── report.controller.js
 │   └── student.controller.js
+│
 ├── middleware/
-│   └── isAdmin.js                # Route protection
+│   └── isAdmin.js
+│
 ├── models/
 │   ├── admin.model.js
 │   ├── branch.model.js
 │   ├── feeStructure.model.js
 │   ├── payment.model.js
 │   └── student.model.js
+│
+├── public/
+│   ├── css/
+│       └── style.css
+│
 ├── routes/
 │   ├── adminRoutes.js
 │   ├── feeStructureRoutes.js
 │   ├── paymentRoutes.js
 │   ├── reportRoutes.js
 │   └── studentRoutes.js
+│
+├── uploads/
+│
 ├── utils/
 │   ├── calculateExpectedTotal.js
 │   ├── exportPDF.js
@@ -81,19 +91,70 @@ fee-management/
 │   ├── generateReceiptPDF.js
 │   ├── getLateFine.js
 │   ├── pdfGenerator.js
+│   ├── sendOtpEmail.js
 │   ├── sendReceiptEmail.js
 │   ├── uploadToCloudinary.js
 │   └── wrapAsync.js
-├── workers/
-│   └── receiptWorker.js          # Background job worker
+│
 ├── views/
-│   ├── layouts/
 │   ├── admin/
+│   │   ├── auth/
+│   │   │   ├── forgetPassword.ejs
+│   │   │   ├── login.ejs
+│   │   │   ├── new-password.ejs
+│   │   │   ├── register.ejs
+│   │   │   ├── reset-verify-otp.ejs
+│   │   │   └── verify-otp.ejs
+│   │   │
+│   │   ├── fee/
+│   │   │   ├── edit.ejs
+│   │   │   ├── index.ejs
+│   │   │   └── new.ejs
+│   │   │
+│   │   ├── student/
+│   │   │   ├── edit.ejs
+│   │   │   ├── new.ejs
+│   │   │   ├── search.ejs
+│   │   │   └── show.ejs
+│   │   │
+│   │   ├── dashboard.ejs
+│   │   └── payments.ejs
+│   │
+│   ├── layouts/
+│   │   └── boilerplate.ejs
+│   │
+│   ├── partials/
+│   │   ├── flash.ejs
+│   │   ├── footer.ejs
+│   │   └── navbar.ejs
+│   │
 │   ├── report/
-│   └── student/
-└── public/
-    └── css/
-        └── style.css
+│   │   ├── pdf/
+│   │   │   ├── branch-report.ejs
+│   │   │   ├── duration-report.ejs
+│   │   │   ├── hostel-report.ejs
+│   │   │   └── student-status.ejs
+│   │   │
+│   │   ├── branch-report.ejs
+│   │   ├── duration-report.ejs
+│   │   ├── hostel-report.ejs
+│   │   ├── index.ejs
+│   │   └── student-status.ejs
+│   │
+│   ├── student/
+│   │   ├── show_student_details.ejs
+│   │   ├── student_search_form.ejs
+|   |
+│   ├── contact.ejs
+│   ├── error.ejs
+│   ├── home.ejs
+│   ├── index.ejs
+│   ├── pay.ejs
+│   └── receipt.ejs
+│
+├── workers/
+│   └── receiptWorker.js
+└── app.js
 ```
 
 ---
