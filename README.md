@@ -47,115 +47,28 @@ A full-stack web application for managing college fee collection, payment proces
 
 ```
 fee-management/
-├── config/    # DB, mail, cloud setup
-│   ├── cloudinary.js
-│   ├── database.js
-│   ├── mailer.js
-│   └── queue.js
+├── config/        # DB, mail, cloud & queue setup
+├── controllers/   # Business logic
+├── models/        # Mongoose schemas
+├── routes/        # API endpoints
+├── middleware/    # Auth & access control
+├── utils/         # Helper functions (PDF, email, calculations)
+├── workers/       # Background jobs (Bull + Redis)
 │
-├── controllers/
-│   ├── admin.controller.js
-│   ├── auth.controller.js
-│   ├── feeStructure.controller.js
-│   ├── payment.controller.js
-│   ├── report.controller.js
-│   └── student.controller.js
+├── views/         # EJS templates (admin, student, reports)
+├── public/        # Static assets (CSS, JS, media)
+├── uploads/       # File uploads
 │
-├── middleware/
-│   └── isAdmin.js
-│
-├── models/
-│   ├── admin.model.js
-│   ├── branch.model.js
-│   ├── feeStructure.model.js
-│   ├── payment.model.js
-│   └── student.model.js
-│
-├── public/
-│   ├── css/
-│       └── style.css
-│
-├── routes/
-│   ├── adminRoutes.js
-│   ├── feeStructureRoutes.js
-│   ├── paymentRoutes.js
-│   ├── reportRoutes.js
-│   └── studentRoutes.js
-│
-├── uploads/
-│
-├── utils/
-│   ├── calculateExpectedTotal.js
-│   ├── exportPDF.js
-│   ├── ExpressError.js
-│   ├── generateReceiptPDF.js
-│   ├── getLateFine.js
-│   ├── pdfGenerator.js
-│   ├── sendOtpEmail.js
-│   ├── sendReceiptEmail.js
-│   ├── uploadToCloudinary.js
-│   └── wrapAsync.js
-│
-├── views/
-│   ├── admin/
-│   │   ├── auth/
-│   │   │   ├── forgetPassword.ejs
-│   │   │   ├── login.ejs
-│   │   │   ├── new-password.ejs
-│   │   │   ├── register.ejs
-│   │   │   ├── reset-verify-otp.ejs
-│   │   │   └── verify-otp.ejs
-│   │   │
-│   │   ├── fee/
-│   │   │   ├── edit.ejs
-│   │   │   ├── index.ejs
-│   │   │   └── new.ejs
-│   │   │
-│   │   ├── student/
-│   │   │   ├── edit.ejs
-│   │   │   ├── new.ejs
-│   │   │   ├── search.ejs
-│   │   │   └── show.ejs
-│   │   │
-│   │   ├── dashboard.ejs
-│   │   └── payments.ejs
-│   │
-│   ├── layouts/
-│   │   └── boilerplate.ejs
-│   │
-│   ├── partials/
-│   │   ├── flash.ejs
-│   │   ├── footer.ejs
-│   │   └── navbar.ejs
-│   │
-│   ├── report/
-│   │   ├── pdf/
-│   │   │   ├── branch-report.ejs
-│   │   │   ├── duration-report.ejs
-│   │   │   ├── hostel-report.ejs
-│   │   │   └── student-status.ejs
-│   │   │
-│   │   ├── branch-report.ejs
-│   │   ├── duration-report.ejs
-│   │   ├── hostel-report.ejs
-│   │   ├── index.ejs
-│   │   └── student-status.ejs
-│   │
-│   ├── student/
-│   │   ├── show_student_details.ejs
-│   │   ├── student_search_form.ejs
-|   |
-│   ├── contact.ejs
-│   ├── error.ejs
-│   ├── home.ejs
-│   ├── index.ejs
-│   ├── pay.ejs
-│   └── receipt.ejs
-│
-├── workers/
-│   └── receiptWorker.js
-└── app.js
+├── app.js         # Entry point
+├── .env           # Environment variables
+└── package.json   # Dependencies
+
 ```
+### Key Directories
+
+- **workers/** — Handles background jobs like receipt PDF generation and email delivery using Bull + Redis
+- **utils/** — Contains reusable logic such as fee calculation, PDF generation, and email services
+- **views/report/pdf/** — EJS templates used to generate downloadable PDF reports
 
 ---
 
