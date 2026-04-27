@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("../config/database"); // we are adding this line just to address the issue- we dont have option to deploy background worker freely on render so we are combining both process in single process(app.js)
+require("./config/database"); // we are adding this line just to address the issue- we dont have option to deploy background worker freely on render so we are combining both process in single process(app.js)
 
 const express = require("express");
 const path = require("path");
@@ -115,7 +115,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start worker in same process (free tier deployment)
+// Start worker in same process (this is only for free tier deployment)
 require("./workers/receiptWorker");
 
 app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
