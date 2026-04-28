@@ -44,7 +44,7 @@
       <th>Name</th>
       <th>Roll No</th>
       <th>Branch</th>
-      <th>Status</th>
+      <!-- <th>Status</th> -->
     </tr>
   </thead>
   <tbody>
@@ -54,9 +54,9 @@
         <td><%= s.name %></td>
         <td><%= s.rollNo %></td>
         <td><%= s.branchName %> (<%= s.branchCode %>)</td>
-        <td class="<%= s.status === 'UNPAID' ? 'unpaid' : 'partial' %>">
+        <!-- <td class="<%= s.status === 'UNPAID' ? 'unpaid' : 'partial' %>">
           <%= s.status %>
-        </td>
+        </td> -->
       </tr>
     <% }) %>
   </tbody>
