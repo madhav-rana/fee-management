@@ -133,10 +133,20 @@ exports.toggleHostel = async (req, res) => {
 
 
 // ADD NEW STUDENT FORM
+// exports.getAddStudentPage = async (req, res) => {
+//   const branches = await Branch.find();
+//   const feeStructures = await FeeStructure.find();
+//   res.render("admin/student/new", { branches, feeStructures });
+// };
 exports.getAddStudentPage = async (req, res) => {
   const branches = await Branch.find();
   const feeStructures = await FeeStructure.find();
-  res.render("admin/student/new", { branches, feeStructures });
+
+  // Read failedStudents from session and clear it
+  const failedStudents = req.session.failedStudents || [];
+  req.session.failedStudents = null;
+
+  res.render("admin/student/new", { branches, feeStructures, failedStudents });
 };
 
 // ADD NEW STUDENT
@@ -213,19 +223,25 @@ exports.bulkUploadStudents = async (req, res) => {
         const formattedStudents = [];
 
         for (let data of students) {
-          console.log(data);
-          let reason = "";
+          // console.log(data);
 
-          if (!data.name || !data.rollNo) reason = "Missing name or rollNo";
+          let reasons = [];
+
+          if (!data.name || !data.rollNo) reasons.push("Missing name or rollNo");
 
           const branchId = branchMap[data.branch?.trim()];
-          if (!branchId) reason = "Invalid branch";
+          if (!branchId) reasons.push("Invalid branch");
 
           const feeId = feeMap[data.feeStructure?.trim()];
-          if (!feeId) reason = "Invalid feeStructure";
+          if (!feeId) reasons.push("Invalid feeStructure");
 
-          if (reason) {
-            failedStudents.push({ ...data, reason });
+          if (!data.email) reasons.push("Missing email");
+          if (!data.contactNumber) reasons.push("Missing contact number");
+          if (!data.address) reasons.push("Missing address");
+          if (!data.dateOfAdmission) reasons.push("Missing dateOfAdmission");
+
+          if (reasons.length > 0) {
+            failedStudents.push({ ...data, reason: reasons.join(", ") });
             continue;
           }
 
@@ -235,10 +251,11 @@ exports.bulkUploadStudents = async (req, res) => {
             course: "BTECH",
             branch: branchId,
             year: Number(data.year) || 1,
-            isHosteller: data.isHosteller === "true",
+            isHosteller: String(data.isHosteller).toLowerCase() === "true",
             contactNumber: data.contactNumber,
             email: data.email,
             address: data.address,
+            dateOfAdmission: data.dateOfAdmission ? new Date(data.dateOfAdmission) : new Date(),
             feeStructure: feeId,
           });
         }
@@ -270,20 +287,24 @@ exports.bulkUploadStudents = async (req, res) => {
         fs.unlinkSync(req.file.path); // delete uploaded file
 
         // req.flash("success", `${insertedCount} students added successfully`);
+        
+        // Store failedStudents in session
+        req.session.failedStudents = failedStudents;
 
         // Smart flash handling
         if (insertedCount === 0) {
-            req.flash("error", "No students were added. Please check your CSV data.");
+          req.flash("error", "No students were added");
         } else if (failedStudents.length > 0) {
-            req.flash(
-                "success",
-                `${insertedCount} students added, ${failedStudents.length} failed`
-            );
+          req.flash(
+              "success",
+              `${insertedCount} students added, ${failedStudents.length} failed`
+          );
         } else {
-            req.flash("success", `${insertedCount} students added successfully`);
+          req.flash("success", `${insertedCount} students added successfully`);
         }
         
-        return res.render("admin/student/new", { failedStudents, branches, feeStructures });
+        // return res.render("admin/student/new", { failedStudents, branches, feeStructures });
+        return res.redirect("/api/v1/admin/students/add");
 
       } catch (err) {
         if (req.file && fs.existsSync(req.file.path)) {
