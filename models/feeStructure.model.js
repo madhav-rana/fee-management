@@ -60,19 +60,20 @@ const feeStructureSchema = new mongoose.Schema(
       default: 100,
       min: 0
     }
-  });
-  //  AUTO-CALCULATE totalAmount
-  feeStructureSchema.pre("save", async function () {
-    this.totalAmount =
-      this.breakdown.tuition +
-      this.breakdown.cautionMoney +
-      this.breakdown.exam +
-      (this.breakdown.activity || 0) +
-      (this.breakdown.others || 0) + 
-      this.hostelFee;
-
   },
   { timestamps: true }
 );
+
+//  AUTO-CALCULATE totalAmount
+feeStructureSchema.pre("save", async function () {
+  this.totalAmount =
+    this.breakdown.tuition +
+    this.breakdown.cautionMoney +
+    this.breakdown.exam +
+    (this.breakdown.activity || 0) +
+    (this.breakdown.others || 0) + 
+    this.hostelFee;
+
+});
 
 module.exports = mongoose.model("FeeStructure", feeStructureSchema);
