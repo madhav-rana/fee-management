@@ -33,13 +33,16 @@ const studentSchema = new mongoose.Schema(
     },
     contactNumber: {
       type: String,
-      required: true
+      required: true,
+      match: [/^\d{10}$/, "Enter valid 10-digit number"]
     },
     email: {
       type: String,
       unique: true,
       required: true,
-      match: /.+\@.+\..+/
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Invalid email"]
     },
     address: {
       type: String,
