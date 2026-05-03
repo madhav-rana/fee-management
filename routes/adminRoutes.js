@@ -35,8 +35,6 @@ router.use(isAdmin);
 
 router.get("/dashboard", wrapAsync(adminController.getDashboard));
 
-// router.get("/branch-analysis/:branchId", adminController.getBranchAnalysis);
-
 router.get("/students", adminController.getStudentSearchPage);
 router.get("/students/search", wrapAsync(adminController.searchStudent));
 
@@ -62,6 +60,11 @@ router.post(
 // because it uses streams — wrapAsync won't catch stream errors
 // stream errors must be handled inside the function itself (already done above)
 
+// Edit
+router.get("/students/:id/edit", wrapAsync(adminController.renderEditForm));
+
+// Update
+router.post("/students/:id", wrapAsync(adminController.updateStudent));
 
 // Show all payments
 router.get("/payments", wrapAsync(adminController.getAllPayments));
@@ -69,19 +72,5 @@ router.get("/payments", wrapAsync(adminController.getAllPayments));
 // logout
 router.get("/logout", authController.logout);
 
-// // ================= STUDENT EDIT/UPDATE ROUTES =================
-
-// 1. Edit form dikhane ke liye (GET)
-// Path: /api/v1/admin/students/:id/edit
-router.get("/students/:id/edit", wrapAsync(adminController.renderEditForm));
-
-// 2. Data update karne ke liye (POST) 
-router.post("/students/:id", wrapAsync(adminController.updateStudent));
-
-
-// Student ki details dikhane ke liye GET route
-// router.get("/students/:id", wrapAsync(adminController.searchStudent)); 
-// Note: Agar adminController.searchStudent sirf search query leta hai, 
-// toh aapko ek naya function 'getStudentDetails' banana pad sakta hai.
 
 module.exports = router;

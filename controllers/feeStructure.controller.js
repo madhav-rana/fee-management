@@ -4,7 +4,7 @@ const Student = require("../models/student.model");
 
 // GET all fee structures
 exports.getAllFeeStructures = async (req, res) => {
-  const feeStructures = await FeeStructure.find().sort({ academicYear: -1 });
+  const feeStructures = await FeeStructure.find().sort({ academicYear: 1 });
   res.render("admin/fee/index", { feeStructures });
 };
 

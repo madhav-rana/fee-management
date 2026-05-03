@@ -1,14 +1,14 @@
 <% layout("layouts/boilerplate") %>
 
     <div class="container mt-4 col-6">
-        <h2>Add Fee Structure</h2>
+        <h2 class="text-center">Add Fee Structure</h2> <hr class="mb-5">
 
         <form action="/api/v1/fees" method="POST">
 
-            <label>Academic Year</label>
+            <label class="fs-6">Academic Year</label>
             <input name="academicYear" class="form-control" placeholder="2025-2026" required>
 
-            <label class="mt-2">Course</label>
+            <label class="mt-2 fs-6">Course</label>
             <select name="course" class="form-control">
                 <option value="BTECH">BTECH</option>
             </select>
@@ -21,13 +21,13 @@
             <input name="breakdown[activity]" placeholder="Activity Fee" class="form-control mb-2">
             <input name="breakdown[others]" placeholder="Other Fees" class="form-control mb-2">
 
-            <label>Hostel Fee</label>
+            <label class="fs-6">Hostel Fee</label>
             <input name="hostelFee" class="form-control">
 
-            <label class="mt-2">Due Date</label>
+            <label class="mt-2 fs-6">Due Date</label>
             <input type="date" name="dueDate" class="form-control">
 
-            <label class="mt-2">Fine Per Day</label>
+            <label class="mt-2 fs-6">Fine Per Week</label>
             <input name="finePerDay" class="form-control">
 
             <button class="btn btn-success mt-4">Save</button>
