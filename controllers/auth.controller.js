@@ -142,6 +142,7 @@ exports.postForgetPassword = async (req, res) => {
     await sendOtpEmail(admin.email, admin.otp);
     console.log(`📧 OTP sent on ${admin.email}`);
   }
+  console.log(otp);
   res.redirect(`/api/v1/admin/reset-password-verify?email=${admin.email}`);
 };
 
